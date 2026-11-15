@@ -1,7 +1,7 @@
 """Recursive-descent parser for NYX."""
 from .ast_nodes import (
-    Binary, BlockStatement, Grouping, IfStatement, LetStatement, Literal,
-    PrintStatement, Unary, Variable, WhileStatement,
+    AssignStatement, Binary, BlockStatement, Grouping, IfStatement,
+    LetStatement, Literal, PrintStatement, Unary, Variable, WhileStatement,
 )
 from .errors import ParseError
 from .tokens import Token, TokenType
@@ -31,6 +31,12 @@ class Parser:
             self._consume(TokenType.RIGHT_PAREN, "Expected ')' after the value.")
             self._consume_terminator("Expected ';' or a line break after the print statement.")
             return PrintStatement(value)
+        if self._check(TokenType.IDENTIFIER) and self._check_next(TokenType.EQUAL):
+            name = self._advance()
+            self._advance()
+            value = self._expression()
+            self._consume_terminator("Expected ';' or a line break after the assignment.")
+            return AssignStatement(name, value)
         if self._match(TokenType.IF):
             keyword = self._previous()
             self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.")
@@ -47,8 +53,7 @@ class Parser:
             return WhileStatement(keyword, condition, self._block())
         if self._match(TokenType.LEFT_BRACE):
             return self._block_body()
-        token = self._peek()
-        self._error(token, "Expected a statement: 'let', 'print', 'if', 'while' or block.")
+        self._error(self._peek(), "Expected a statement: 'let', assignment, 'print', 'if', 'while' or block.")
 
     def _block(self) -> BlockStatement:
         self._consume(TokenType.LEFT_BRACE, "Expected '{' before block.")
@@ -152,6 +157,9 @@ class Parser:
 
     def _check(self, token_type: TokenType) -> bool:
         return self._peek().type == token_type
+
+    def _check_next(self, token_type: TokenType) -> bool:
+        return self.current + 1 < len(self.tokens) and self.tokens[self.current + 1].type == token_type
 
     def _advance(self) -> Token:
         if not self._check(TokenType.EOF):

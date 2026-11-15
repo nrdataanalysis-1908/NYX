@@ -1,12 +1,15 @@
 """Tree-walk interpreter for the NYX language MVP."""
-from .ast_nodes import Binary, Grouping, LetStatement, Literal, PrintStatement, Unary, Variable
+from .ast_nodes import (
+    Binary, BlockStatement, Grouping, IfStatement, LetStatement, Literal,
+    PrintStatement, Unary, Variable, WhileStatement,
+)
 from .errors import RuntimeNyxError
 from .tokens import TokenType
 
 
 class Interpreter:
     def __init__(self, output=print):
-        self.environment: dict[str, object] = {}
+        self.scopes: list[dict[str, object]] = [{}]
         self.output = output
 
     def interpret(self, statements: list[object]) -> None:
@@ -15,12 +18,34 @@ class Interpreter:
 
     def _execute(self, statement) -> None:
         if isinstance(statement, LetStatement):
+            scope = self.scopes[-1]
             name = statement.name.lexeme
-            if name in self.environment:
-                self._runtime_error(statement.name, f"Variable '{name}' is already declared.")
-            self.environment[name] = self._evaluate(statement.initializer)
+            if name in scope:
+                self._runtime_error(statement.name, f"Variable '{name}' is already declared in this scope.")
+            scope[name] = self._evaluate(statement.initializer)
         elif isinstance(statement, PrintStatement):
             self.output(self._evaluate(statement.expression))
+        elif isinstance(statement, BlockStatement):
+            self.scopes.append({})
+            try:
+                for child in statement.statements:
+                    self._execute(child)
+            finally:
+                self.scopes.pop()
+        elif isinstance(statement, IfStatement):
+            condition = self._evaluate(statement.condition)
+            self._require_bool(condition, statement.keyword)
+            if condition:
+                self._execute(statement.then_branch)
+            elif statement.else_branch is not None:
+                self._execute(statement.else_branch)
+        elif isinstance(statement, WhileStatement):
+            while True:
+                condition = self._evaluate(statement.condition)
+                self._require_bool(condition, statement.keyword)
+                if not condition:
+                    break
+                self._execute(statement.body)
         else:
             raise RuntimeNyxError("Unsupported statement node.")
 
@@ -31,9 +56,10 @@ class Interpreter:
             return self._evaluate(expression.expression)
         if isinstance(expression, Variable):
             name = expression.name.lexeme
-            if name not in self.environment:
-                self._runtime_error(expression.name, f"Undefined variable '{name}'.")
-            return self.environment[name]
+            for scope in reversed(self.scopes):
+                if name in scope:
+                    return scope[name]
+            self._runtime_error(expression.name, f"Undefined variable '{name}'.")
         if isinstance(expression, Unary):
             right = self._evaluate(expression.right)
             if expression.operator.type == TokenType.NOT:
@@ -98,7 +124,7 @@ class Interpreter:
 
     def _require_bool(self, value, token) -> None:
         if type(value) is not bool:
-            self._runtime_error(token, "Logical operators require boolean operands.")
+            self._runtime_error(token, "Conditions and logical operators require boolean values.")
 
     def _runtime_error(self, token, message):
         raise RuntimeNyxError(f"[NYX:L{token.line}:C{token.column}] {message}")

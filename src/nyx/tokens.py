@@ -6,6 +6,8 @@ from enum import Enum, auto
 class TokenType(Enum):
     LET = auto()
     PRINT = auto()
+    FN = auto()
+    RETURN = auto()
     IF = auto()
     ELSE = auto()
     WHILE = auto()
@@ -35,6 +37,7 @@ class TokenType(Enum):
     RIGHT_PAREN = auto()
     LEFT_BRACE = auto()
     RIGHT_BRACE = auto()
+    COMMA = auto()
     SEMICOLON = auto()
     EOF = auto()
 

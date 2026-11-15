@@ -132,7 +132,7 @@ class Interpreter:
 
     def _require_bool(self, value, token) -> None:
         if type(value) is not bool:
-            self._runtime_error(token, "Conditions and logical operators require boolean values.")
+            self._runtime_error(token, "Conditions and logical operators require boolean operands.")
 
     def _runtime_error(self, token, message):
         raise RuntimeNyxError(f"[NYX:L{token.line}:C{token.column}] {message}")

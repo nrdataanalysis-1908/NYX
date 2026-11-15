@@ -1,7 +1,7 @@
 """Tree-walk interpreter for the NYX language MVP."""
 from .ast_nodes import (
-    Binary, BlockStatement, Grouping, IfStatement, LetStatement, Literal,
-    PrintStatement, Unary, Variable, WhileStatement,
+    AssignStatement, Binary, BlockStatement, Grouping, IfStatement,
+    LetStatement, Literal, PrintStatement, Unary, Variable, WhileStatement,
 )
 from .errors import RuntimeNyxError
 from .tokens import TokenType
@@ -23,6 +23,14 @@ class Interpreter:
             if name in scope:
                 self._runtime_error(statement.name, f"Variable '{name}' is already declared in this scope.")
             scope[name] = self._evaluate(statement.initializer)
+        elif isinstance(statement, AssignStatement):
+            name = statement.name.lexeme
+            for scope in reversed(self.scopes):
+                if name in scope:
+                    scope[name] = self._evaluate(statement.value)
+                    break
+            else:
+                self._runtime_error(statement.name, f"Cannot assign to undefined variable '{name}'.")
         elif isinstance(statement, PrintStatement):
             self.output(self._evaluate(statement.expression))
         elif isinstance(statement, BlockStatement):

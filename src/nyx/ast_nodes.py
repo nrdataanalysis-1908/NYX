@@ -38,6 +38,12 @@ class LetStatement:
 
 
 @dataclass(frozen=True, slots=True)
+class AssignStatement:
+    name: Token
+    value: object
+
+
+@dataclass(frozen=True, slots=True)
 class PrintStatement:
     expression: object
 

@@ -1,7 +1,7 @@
 """Tree-walk interpreter for the NYX language."""
 from dataclasses import dataclass
 from .ast_nodes import (
-    AssignStatement, Binary, BlockStatement, Call, FunctionStatement, Grouping,
+    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, FunctionStatement, Grouping,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
     Unary, Variable, WhileStatement,
 )
@@ -52,6 +52,7 @@ class Interpreter:
                     break
             else: self._runtime_error(statement.name, f"Cannot assign to undefined variable '{name}'.")
         elif isinstance(statement, PrintStatement): self.output(self._evaluate(statement.expression))
+        elif isinstance(statement, ExpressionStatement): self._evaluate(statement.expression)
         elif isinstance(statement, BlockStatement):
             self.scopes.append({})
             try:

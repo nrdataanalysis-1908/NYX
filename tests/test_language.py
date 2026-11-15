@@ -23,6 +23,23 @@ def test_declaration_arithmetic_and_print():
     assert execute('let x = 2 + 3 * 4; print(x);') == [14]
 
 
+def test_newline_separates_statements_without_semicolons():
+    source = 'let nome = "NYX"\nlet versao = 0.1\nprint(nome)\nprint(versao)'
+    assert execute(source) == ["NYX", 0.1]
+
+
+def test_semicolons_remain_valid_and_optional():
+    assert execute('let x = 2;\nprint(x)\nprint(x + 1);') == [2, 3]
+
+
+def test_expression_can_continue_on_next_line():
+    assert execute('let total = 10 +\n    5 * 2\nprint(total)') == [20]
+
+
+def test_utf8_bom_is_ignored_at_source_start():
+    assert execute('\ufefflet nome = "NYX"\nprint(nome)') == ["NYX"]
+
+
 def test_operator_precedence_and_grouping():
     assert execute('print((2 + 3) * 4);') == [20]
 
@@ -66,6 +83,6 @@ def test_invalid_character_is_reported():
         Lexer("@").scan_tokens()
 
 
-def test_missing_semicolon_is_reported():
-    with pytest.raises(ParseError, match="Expected ';'"):
-        execute('print(1)')
+def test_missing_statement_separator_is_reported_on_same_line():
+    with pytest.raises(ParseError, match="Expected ';' or a line break"):
+        execute('print(1) print(2)')

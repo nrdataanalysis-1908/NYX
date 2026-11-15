@@ -1,197 +1,150 @@
 # Especificação da linguagem NYX
 
-Versão da especificação: 0.4
+Versão da especificação: 0.5
 Estado: alfa — frontend próprio e interpretador tree-walk.
 
 ## 1. Identidade e objetivo
 
 NYX significa Numerical Yield eXchange. É uma linguagem de programação independente, concebida para computação científica, engenharia de dados, automação e interoperabilidade.
 
-A implementação atual possui lexer, parser recursivo descendente, árvore sintática abstrata (AST), regras de avaliação e interpretador próprios. Python é, neste estágio, a tecnologia hospedeira usada para executar o protótipo; não define a sintaxe nem a semântica da linguagem.
+A implementação atual possui lexer, parser recursivo descendente, AST e interpretador próprios. Python é a tecnologia hospedeira do protótipo; não define a sintaxe nem a semântica da linguagem.
 
-Esta especificação descreve somente os recursos efetivamente implementados. Recursos planejados são identificados como não implementados.
+## 2. Código-fonte
 
-## 2. Arquivos, codificação e comentários
-
-- Extensão de arquivo: `.nyx`.
-- Codificação aceita: UTF-8 com ou sem BOM no início do arquivo.
-- Comentários de linha começam com `#` e terminam na quebra de linha.
-- Espaços, tabulações e retornos de carro são ignorados.
-- Quebras de linha são registradas nas posições dos tokens, mas não geram tokens próprios.
-- Instruções simples podem terminar com ponto e vírgula ou com uma quebra de linha reconhecida pelo parser.
-- O ponto e vírgula é opcional antes do fim do arquivo ou do fechamento de um bloco.
-- Blocos usam `{` e `}`.
-
-Uma quebra de linha delimita uma instrução simples quando o próximo token começa em uma linha posterior à linha do token anterior consumido pela instrução. Se a expressão ainda não foi concluída — por exemplo, depois de um operador binário — o parser continua a expressão na linha seguinte.
+- Extensão: `.nyx`; codificação UTF-8 com ou sem BOM.
+- Comentários de linha começam com `#`.
+- Strings usam aspas duplas e não podem atravessar linhas.
+- Escapes: `\\n`, `\\t`, `\\"` e `\\\\`.
+- Instruções simples terminam com `;`, quebra de linha, `}` ou EOF, conforme o contexto.
+- Blocos são delimitados por `{` e `}`.
 
 ## 3. Tipos e valores
 
-| Tipo | Exemplos | Observações |
-|---|---|---|
-| Integer | `0`, `42` | Inteiro de precisão arbitrária na implementação hospedeira |
-| Float | `3.14` | Ponto flutuante binário de dupla precisão |
-| String | `"NYX"` | Aspas duplas; sem strings multilinha |
-| Boolean | `true`, `false` | Tipo lógico estrito |
-| Null | `null` | Ausência de valor |
+| Tipo | Exemplos |
+|---|---|
+| Integer | `0`, `42` |
+| Float | `3.14` |
+| String | `"NYX"` |
+| Boolean | `true`, `false` |
+| Null | `null` |
 
-O lexer reconhece sequências de escape `\\n`, `\\t`, `\\"` e `\\\\` em strings.
+Inteiros usam precisão arbitrária na implementação hospedeira. Float utiliza ponto flutuante binário de dupla precisão.
 
-## 4. Variáveis, atribuição e saída
+## 4. Variáveis e saída
 
 ```nyx
 let samples = 120
 let ratio = 0.875
 let title = "NYX"
-
+samples = samples + 1
 print(title)
 print(samples * ratio)
-
-samples = samples + 1
-print(samples)
 ```
 
-- `let nome = expressão` declara uma variável no escopo atual.
-- Uma variável não pode ser declarada novamente no mesmo escopo.
-- `nome = expressão` atualiza uma variável já declarada, procurando do escopo mais interno para o mais externo.
-- Atribuir a um identificador não declarado gera erro de execução.
-- `print(expressão)` avalia a expressão e envia o valor ao mecanismo de saída.
+`let nome = expressão` declara no escopo atual. Não se admite redeclaração no mesmo escopo. A atribuição atualiza a declaração visível mais próxima. `print(expressão)` envia o valor ao mecanismo de saída.
 
 ## 5. Expressões e operadores
 
-Da menor para a maior precedência:
+Precedência crescente: `or`; `and`; `== !=`; comparações; `+ -`; `* / %`; unários `not + -`; chamadas e primários.
 
-| Nível | Operadores / formas | Associatividade |
-|---:|---|---|
-| 1 | `or` | Esquerda |
-| 2 | `and` | Esquerda |
-| 3 | `==`, `!=` | Esquerda |
-| 4 | `<`, `<=`, `>`, `>=` | Esquerda |
-| 5 | `+`, `-` binários | Esquerda |
-| 6 | `*`, `/`, `%` | Esquerda |
-| 7 | `not`, `+` unário, `-` unário | Prefixa |
-| 8 | Literais, identificadores e agrupamento | Primária |
+- Aritmética e comparação exigem operandos numéricos.
+- `and`, `or` e `not` exigem Boolean; `and` e `or` usam curto-circuito.
+- Igualdade compara tipo e valor.
+- Divisão e módulo por zero geram erro.
+- `!` isolado não é aceito; use `not`.
 
-Regras semânticas:
-
-- Operadores aritméticos exigem operandos numéricos; booleanos não são aceitos como números.
-- Operadores relacionais aceitam operandos numéricos.
-- Igualdade compara tipo e valor; valores de tipos distintos não são iguais.
-- `and` e `or` exigem booleanos e usam avaliação de curto-circuito.
-- `not` exige um booleano.
-- Divisão e módulo por zero geram erro de execução.
-- O operador `!` isolado não é suportado; use `not`.
-
-## 6. Controle de fluxo e escopos
-
-### Condicional
+## 6. Controle de fluxo
 
 ```nyx
-if (10 > 3) {
-    print("condição verdadeira")
+if (temperature > 30) {
+    print("high")
 } else {
-    print("condição falsa")
+    print("normal")
 }
-```
 
-O bloco `else` é opcional. A condição precisa resultar em Boolean.
-
-### Laço
-
-```nyx
 let index = 0
-while (index < 4) {
+while (index < 3) {
     print(index)
     index = index + 1
 }
 ```
 
-A condição é reavaliada antes de cada iteração e precisa resultar em Boolean.
+Condições precisam resultar em Boolean. Cada bloco cria escopo local; identificadores são resolvidos do escopo mais interno para o mais externo.
 
-### Blocos e resolução de nomes
+## 7. Funções
 
-- O programa começa em um escopo global.
-- Cada bloco executado cria um escopo local.
-- A busca de variáveis percorre os escopos do mais interno ao mais externo.
-- Uma declaração interna pode ocultar uma variável externa de mesmo nome.
-- A atribuição atualiza a declaração visível mais próxima.
-- O escopo local é descartado ao término do bloco, inclusive quando ocorre erro durante sua execução.
+Funções são declaradas com `fn`, recebem parâmetros posicionais e podem devolver um valor com `return`.
 
-## 7. Gramática sintática (EBNF)
+```nyx
+fn calcular_media(a, b) {
+    return (a + b) / 2
+}
 
-A gramática abaixo descreve a estrutura sintática. A delimitação implícita de instruções depende também das posições de linha dos tokens, conforme a seção 2; `line_terminator` é uma condição do parser, não um token produzido pelo lexer.
-
-```ebnf
-program             = { statement } , EOF ;
-
-statement           = declaration
-                    | assignment
-                    | print_statement
-                    | if_statement
-                    | while_statement
-                    | block ;
-
-declaration         = "let" , identifier , "=" , expression , terminator ;
-assignment          = identifier , "=" , expression , terminator ;
-print_statement     = "print" , "(" , expression , ")" , terminator ;
-
-if_statement        = "if" , "(" , expression , ")" , block
-                    , [ "else" , block ] ;
-while_statement     = "while" , "(" , expression , ")" , block ;
-block               = "{" , { statement } , "}" ;
-
-terminator          = ";" | line_terminator | "}" | EOF ;
-
-expression          = logical_or ;
-logical_or          = logical_and , { "or" , logical_and } ;
-logical_and         = equality , { "and" , equality } ;
-equality            = comparison , { ( "==" | "!=" ) , comparison } ;
-comparison          = term , { ( "<" | "<=" | ">" | ">=" ) , term } ;
-term                = factor , { ( "+" | "-" ) , factor } ;
-factor              = unary , { ( "*" | "/" | "%" ) , unary } ;
-unary               = ( "not" | "+" | "-" ) , unary | primary ;
-primary             = number | string | "true" | "false" | "null"
-                    | identifier | "(" , expression , ")" ;
-
-number              = integer | float ;
-identifier          = ( letter | "_" ) , { letter | digit | "_" } ;
+let resultado = calcular_media(10, 20)
+print(resultado)
 ```
 
-## 8. Léxico e diagnósticos
+Funções podem não receber parâmetros. Uma função que termina sem executar `return` devolve `null`. `return` sem expressão também devolve `null`. A quantidade de argumentos deve corresponder à quantidade de parâmetros.
 
-Tokens reconhecidos incluem palavras-chave, identificadores, literais, operadores aritméticos, operadores relacionais, operadores lógicos, parênteses, chaves e ponto e vírgula.
+A resolução de nomes é léxica: uma função conserva acesso aos escopos existentes quando foi declarada. Chamadas criam um escopo de parâmetros isolado. Recursividade e chamadas entre funções são suportadas.
 
-Erros léxicos, sintáticos e de execução usam o formato `[NYX:Lx:Cy]`, com linha e coluna de origem. O interpretador interrompe o programa no primeiro erro. Ainda não há recuperação de erros sintáticos para continuar a análise de um mesmo arquivo.
+Exemplo recursivo:
 
-## 9. Pipeline de execução implementado
+```nyx
+fn factorial(n) {
+    if (n <= 1) {
+        return 1
+    }
+    return n * factorial(n - 1)
+}
 
-1. Leitura do código-fonte como texto.
-2. Análise léxica: fonte para tokens.
-3. Análise sintática: tokens para AST.
-4. Interpretação: avaliação da AST e execução das instruções.
+print(factorial(6))
+```
 
-A AST representa expressões e instruções. O interpretador percorre essa árvore diretamente (tree-walk). Ainda não existe uma etapa independente de análise semântica estática, geração de IR, compilação ou máquina virtual.
+Não há ainda parâmetros nomeados, valores padrão, sobrecarga, funções anônimas, closures mutáveis especificadas como recurso de primeira classe ou funções nativas integradas à linguagem.
 
-## 10. Recursos ainda não implementados
+## 8. Gramática (EBNF)
 
-Não fazem parte da versão 0.4:
+```ebnf
+program          = { statement } , EOF ;
+statement        = function_decl | declaration | assignment | print_stmt
+                 | return_stmt | if_stmt | while_stmt | block ;
+function_decl    = "fn" , identifier , "(" , [ parameters ] , ")" , block ;
+parameters       = identifier , { "," , identifier } ;
+arguments        = expression , { "," , expression } ;
+declaration      = "let" , identifier , "=" , expression , terminator ;
+assignment       = identifier , "=" , expression , terminator ;
+print_stmt       = "print" , "(" , expression , ")" , terminator ;
+return_stmt      = "return" , [ expression ] , terminator ;
+if_stmt          = "if" , "(" , expression , ")" , block , [ "else" , block ] ;
+while_stmt       = "while" , "(" , expression , ")" , block ;
+block            = "{" , { statement } , "}" ;
+terminator       = ";" | line_terminator | "}" | EOF ;
+expression       = logical_or ;
+logical_or       = logical_and , { "or" , logical_and } ;
+logical_and      = equality , { "and" , equality } ;
+equality         = comparison , { ( "==" | "!=" ) , comparison } ;
+comparison       = term , { ( "<" | "<=" | ">" | ">=" ) , term } ;
+term             = factor , { ( "+" | "-" ) , factor } ;
+factor           = unary , { ( "*" | "/" | "%" ) , unary } ;
+unary            = ( "not" | "+" | "-" ) , unary | call ;
+call             = primary , { "(" , [ arguments ] , ")" } ;
+primary          = number | string | "true" | "false" | "null"
+                 | identifier | "(" , expression , ")" ;
+```
 
-- Funções definidas pelo usuário, parâmetros, retorno e recursividade.
-- Coleções nativas, como listas, mapas, conjuntos e tensores.
-- Módulos, pacotes e sistema de importação.
-- Sistema de tipos estático, inferência de tipos e genéricos.
-- Classes, estruturas e traits/interfaces.
-- Laços `for`, `break` e `continue`.
-- Tratamento de exceções na linguagem.
-- Análise semântica estática e resolução antecipada de símbolos.
-- Representação intermediária (IR), compilador, bytecode e máquina virtual.
-- Concorrência, paralelismo e gerenciamento próprio de memória.
-- Bibliotecas científicas, operações tabulares e conectores de dados.
-- Integração nativa com IA.
+`line_terminator` é uma condição do parser baseada nas posições de linha dos tokens, não um token léxico independente.
 
-Esses itens pertencem ao planejamento evolutivo e não devem ser tratados como capacidades disponíveis nesta versão.
+## 9. Pipeline e diagnósticos
 
-## 11. Independência e evolução
+O pipeline atual é: código-fonte → lexer → tokens → parser → AST → interpretador tree-walk. Erros léxicos, sintáticos e de execução identificam linha e coluna no formato `[NYX:Lx:Cy]`. O primeiro erro interrompe a execução.
 
-A gramática, o lexer, o parser, a AST e as regras de avaliação pertencem à NYX. A implementação hospedeira poderá ser substituída ou complementada no futuro, desde que a semântica especificada seja preservada por testes de conformidade.
+## 10. Limitações explícitas
 
-A evolução deve manter separadas a linguagem, o runtime, as bibliotecas científicas e as integrações externas.
+Ainda não implementados: coleções nativas, módulos/imports, sistema de tipos estático, inferência, genéricos, classes/traits, `for`, `break`, `continue`, exceções da linguagem, análise semântica estática, IR, compilador, bytecode/VM, concorrência, paralelismo, gerenciamento próprio de memória, bibliotecas científicas, engine tabular e integrações nativas de IA.
+
+Esses itens são planejamento, não capacidades atuais.
+
+## 11. Evolução
+
+A sintaxe, a semântica e os testes de conformidade pertencem à NYX e devem permanecer independentes da tecnologia hospedeira. A evolução separará linguagem, runtime, bibliotecas científicas e integrações externas.

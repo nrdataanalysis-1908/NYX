@@ -1,5 +1,8 @@
 """Recursive-descent parser for NYX."""
-from .ast_nodes import Binary, Grouping, LetStatement, Literal, PrintStatement, Unary, Variable
+from .ast_nodes import (
+    Binary, BlockStatement, Grouping, IfStatement, LetStatement, Literal,
+    PrintStatement, Unary, Variable, WhileStatement,
+)
 from .errors import ParseError
 from .tokens import Token, TokenType
 
@@ -28,17 +31,42 @@ class Parser:
             self._consume(TokenType.RIGHT_PAREN, "Expected ')' after the value.")
             self._consume_terminator("Expected ';' or a line break after the print statement.")
             return PrintStatement(value)
+        if self._match(TokenType.IF):
+            keyword = self._previous()
+            self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.")
+            condition = self._expression()
+            self._consume(TokenType.RIGHT_PAREN, "Expected ')' after the if condition.")
+            then_branch = self._block()
+            else_branch = self._block() if self._match(TokenType.ELSE) else None
+            return IfStatement(keyword, condition, then_branch, else_branch)
+        if self._match(TokenType.WHILE):
+            keyword = self._previous()
+            self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'while'.")
+            condition = self._expression()
+            self._consume(TokenType.RIGHT_PAREN, "Expected ')' after the while condition.")
+            return WhileStatement(keyword, condition, self._block())
+        if self._match(TokenType.LEFT_BRACE):
+            return self._block_body()
         token = self._peek()
-        self._error(token, "Expected a statement: 'let' or 'print'.")
+        self._error(token, "Expected a statement: 'let', 'print', 'if', 'while' or block.")
+
+    def _block(self) -> BlockStatement:
+        self._consume(TokenType.LEFT_BRACE, "Expected '{' before block.")
+        return self._block_body()
+
+    def _block_body(self) -> BlockStatement:
+        statements = []
+        while not self._check(TokenType.RIGHT_BRACE) and not self._check(TokenType.EOF):
+            statements.append(self._statement())
+        self._consume(TokenType.RIGHT_BRACE, "Expected '}' after block.")
+        return BlockStatement(statements)
 
     def _consume_terminator(self, message: str) -> None:
         if self._match(TokenType.SEMICOLON):
             return
         previous = self._previous()
         current = self._peek()
-        # A physical line break separates statements. Expressions may still
-        # continue across lines when the grammar expects another operand.
-        if current.type == TokenType.EOF or current.line > previous.line:
+        if current.type in (TokenType.EOF, TokenType.RIGHT_BRACE) or current.line > previous.line:
             return
         self._error(current, message)
 

@@ -18,7 +18,8 @@ def main(argv=None) -> int:
         print(f"nyx: file not found: {args.file}", file=sys.stderr)
         return 2
     try:
-        run(args.file.read_text(encoding="utf-8"))
+        # utf-8-sig transparently accepts UTF-8 files with or without a BOM.
+        run(args.file.read_text(encoding="utf-8-sig"))
     except (NyxError, UnicodeError) as exc:
         print(str(exc), file=sys.stderr)
         return 1

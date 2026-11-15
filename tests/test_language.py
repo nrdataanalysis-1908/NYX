@@ -187,7 +187,7 @@ def test_function_argument_count_is_validated():
 
 
 def test_non_function_call_is_rejected():
-    with pytest.raises(RuntimeNyxError, match="Only user-defined functions"):
+    with pytest.raises(RuntimeNyxError, match="Only functions can be called"):
         execute('let value = 3\nvalue()')
 
 
@@ -239,8 +239,8 @@ def test_list_equality_is_structural_and_type_strict():
     ('let values = [1]\nprint(values[0.5])', "Integer values"),
     ('let values = [1]\nprint(values[true])', "Integer values"),
     ('let value = 1\nprint(value[0])', "requires a List"),
-    ('append(1, 2)', "append() expects"),
-    ('len("text")', "len() expects"),
+    ('append(1, 2)', "append\\(\\) expects"),
+    ('len("text")', "len\\(\\) expects"),
     ('len()', "expects 1 argument"),
     ('append([], 1, 2)', "expects 2 argument"),
 ])

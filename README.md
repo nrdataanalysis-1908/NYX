@@ -1,68 +1,68 @@
-# NYX
+# NYX — Numerical Yield eXchange
 
-**Numerical Yield eXchange**
+**Scientific Data Programming Language** · *Think Scientifically. Compute Intelligently.*
+Uma linguagem independente da NR TECH.
 
-Linguagem de programação independente, concebida para ciência de dados, computação científica e inteligência artificial.
+> Versão **0.0.1** — pré-alfa. O que existe hoje é a fundação: lexer, parser, AST e um
+> interpretador executável. Ciência de dados, IR, otimizador e IA são fases futuras e **ainda não existem**.
 
-A NYX é um projeto da **NR TECH** que busca unificar operações científicas e orientadas a dados em uma linguagem coesa, com sintaxe própria, semântica explícita e execução progressivamente otimizada.
+## Instalação (desenvolvimento)
 
-> Think Scientifically. Compute Intelligently.
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+```
 
-## Objetivos
+## Uso
 
-- Oferecer uma linguagem legível para análise de dados e computação científica.
-- Integrar matemática, estatística, processamento de dados e inteligência artificial.
-- Reduzir a fragmentação entre ferramentas e etapas de fluxos científicos.
-- Priorizar precisão, reprodutibilidade, rastreabilidade e desempenho mensurável.
-- Executar localmente, sem exigir um serviço remoto para o funcionamento do núcleo.
+```powershell
+nyx run examples\hello.nyx
+nyx run examples\mean.nyx
+nyx tokens examples\hello.nyx    # depuração do lexer
+nyx ast examples\hello.nyx       # depuração do parser
+```
 
-## Princípios de engenharia
+Exemplo (`examples/mean.nyx`):
 
-1. **Independência:** gramática, parser, sistema de tipos, representação intermediária e runtime próprios.
-2. **Determinismo:** operações fundamentais devem produzir resultados reproduzíveis, sem depender de modelos de IA.
-3. **Interoperabilidade:** integração com bancos de dados, APIs e ecossistemas externos por adaptadores.
-4. **Evolução incremental:** cada etapa deve ser funcional, testada e documentada.
-5. **Transparência:** decisões de execução, conversões e otimizações devem ser inspecionáveis.
+```
+fn calculate_mean(values: Array<Float64>) -> Float64:
+    return sum(values) / len(values)
 
-## Escopo tecnológico
+observations = [12.5, 14.0, 13.2, 15.8, 11.9]
+print("média:", calculate_mean(observations))
+```
 
-A evolução da linguagem está organizada em três eixos:
+## Testes
 
-- **NYX Science:** matemática, estatística, vetores, matrizes, tensores e simulação.
-- **NYX Data:** leitura, transformação, consulta e análise de conjuntos de dados.
-- **NYX AI:** integração de recursos de inteligência artificial e aprendizado de máquina.
+```powershell
+pytest
+```
 
-Esses eixos serão implementados gradualmente sobre uma arquitetura comum.
+## Estado atual (0.0.1)
 
-## Documentação
-
-| Documento | Descrição |
+| Área | Estado |
 |---|---|
-| [Especificação da linguagem](docs/ESPECIFICACAO_LINGUAGEM.md) | Primeira proposta de sintaxe, palavras reservadas, tipos e gramática EBNF |
-| [Arquitetura](docs/ARQUITETURA.md) | Componentes e pipeline de execução |
-| [Roadmap](docs/ROADMAP.md) | Fases de desenvolvimento e critérios de conclusão |
+| Lexer com indentação, comentários, strings, números | Implementado e testado |
+| Parser (precedência de operadores, `fn`, `if/elif/else`, `while`, `for`) | Implementado e testado |
+| Interpretador tree-walking | Implementado e testado |
+| Erros com arquivo, linha, coluna e trecho do código | Implementado e testado |
+| Tipos: `Int`, `Float64`, `Bool`, `String`, `Null`, `Array` (dinâmicos e estritos) | Implementado |
+| Anotações de tipo (`values: Array<Float64>`) | Lidas pelo parser, **não verificadas** |
+| Sistema de tipos estático, IR, bytecode/VM | Não iniciado |
+| DataFrames, estatística, IA, otimizador de execução | Não iniciado |
 
-A especificação da linguagem está em estado de rascunho (versão 0.1.0-draft). Suas construções são propostas de projeto e ainda não devem ser tratadas como recursos executáveis.
+Gramática do subconjunto atual: [`docs/grammar.ebnf`](docs/grammar.ebnf).
 
-## Arquitetura planejada
+## Estrutura
 
-- Frontend: análise léxica, sintática e semântica.
-- Sistema de tipos: tipos fundamentais, estruturas científicas e inferência controlada.
-- AST e IR: representação estruturada e intermediária próprias.
-- Engine: planejamento e otimização determinística.
-- Runtime: execução, memória, erros e observabilidade.
-- Biblioteca padrão: operações matemáticas, estatísticas e de dados.
-
-## Estado do projeto
-
-O projeto encontra-se na fase de especificação e construção da fundação da linguagem. Os exemplos e componentes descritos nesta documentação representam objetivos de projeto, não funcionalidades já implementadas.
+```
+src/nyx/        lexer.py · parser.py · nodes.py · interpreter.py · errors.py · cli.py
+tests/          testes por camada
+examples/       programas .nyx
+docs/           gramática formal
+```
 
 ## Licença
 
-Distribuído sob a licença Apache 2.0. Consulte o arquivo [LICENSE](LICENSE).
-
-## Organização
-
-Desenvolvido pela **NR TECH**.
-
-- Repositório: https://github.com/nrdataanalysis-1908/NYX
+MIT — ver [`LICENSE`](LICENSE).

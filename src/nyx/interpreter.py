@@ -27,7 +27,10 @@ class Interpreter:
         self.output = output
 
     def interpret(self, statements):
-        for statement in statements: self._execute(statement)
+        try:
+            for statement in statements: self._execute(statement)
+        except _ReturnSignal:
+            raise RuntimeNyxError("Return statement used outside a function.")
 
     def _execute(self, statement):
         if isinstance(statement, LetStatement):

@@ -32,6 +32,8 @@ class AssignStatement:
     name: Token
     value: object
 @dataclass(frozen=True, slots=True)
+class ExpressionStatement: expression: object
+@dataclass(frozen=True, slots=True)
 class PrintStatement: expression: object
 @dataclass(frozen=True, slots=True)
 class BlockStatement: statements: list[object]

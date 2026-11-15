@@ -72,7 +72,7 @@ unary         = ( "not" | "+" | "-" ) , unary | primary ;
 primary       = number | string | "true" | "false" | "null"
               | identifier | "(" , expression , ")" ;
 number        = integer | float ;
-identifier    = letter | "_" , { letter | digit | "_" } ;
+identifier    = ( letter | "_" ) , { letter | digit | "_" } ;
 ```
 
 ## 7. Diagnósticos

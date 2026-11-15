@@ -1,57 +1,68 @@
 # Especificação inicial da linguagem NYX
 
-Versão da especificação: 0.2 (MVP em evolução)
-Estado: implementada no protótipo alfa; sujeita a evolução compatível.
+Versão da especificação: 0.3 (MVP em evolução)
+Estado: implementação alfa com declarações, expressões, blocos e controle condicional/iterativo.
 
-## 1. Objetivo desta versão
+## 1. Objetivo
 
-Estabelecer uma linguagem mínima, própria e executável, com frontend, AST e interpretador independentes. A implementação inicial do runtime utiliza Python como tecnologia hospedeira; a semântica dos programas é definida pela NYX.
+Estabelecer uma linguagem própria e executável, com frontend, AST, semântica e interpretador independentes. Python é a tecnologia hospedeira do runtime atual; não define a gramática nem a semântica da NYX.
 
-## 2. Arquivo, codificação e separação de instruções
+## 2. Arquivos e instruções
 
 - Extensão: `.nyx`.
-- Codificação: UTF-8, com ou sem BOM.
-- Comentários de linha: começam com `#`.
+- Codificação: UTF-8 com ou sem BOM.
+- Comentários de linha começam com `#`.
 - Instruções podem ser separadas por quebra de linha ou ponto e vírgula.
-- Ponto e vírgula continua válido para separar instruções na mesma linha.
-- Quebras de linha dentro de expressões são aceitas quando a gramática ainda espera a continuação da expressão.
+- Ponto e vírgula é opcional quando a quebra de linha ou o fechamento do bloco delimita a instrução.
+- Blocos são delimitados por `{` e `}`.
 
 ## 3. Tipos fundamentais
 
-| Tipo | Literais | Observação |
-|---|---|---|
-| Integer | `0`, `42` | Inteiro de precisão arbitrária nesta implementação |
-| Float | `3.14` | Ponto flutuante binário de dupla precisão |
-| String | `"NYX"` | Aspas duplas; escapes `\\n`, `\\t`, `\\"` e `\\\\` |
-| Boolean | `true`, `false` | Operações lógicas estritas |
-| Null | `null` | Ausência explícita de valor |
+| Tipo | Literais |
+|---|---|
+| Integer | `0`, `42` |
+| Float | `3.14` |
+| String | `"NYX"` |
+| Boolean | `true`, `false` |
+| Null | `null` |
 
-## 4. Declaração e saída
+Inteiros usam precisão arbitrária na implementação hospedeira. Float utiliza ponto flutuante binário de dupla precisão.
 
-As duas formas abaixo são válidas:
+## 4. Declarações e saída
 
 ```nyx
 let samples = 120
 let ratio = 0.875
-let title = "NYX scientific runtime"
-let validated = true
-
+let title = "NYX"
 print(title)
 print(samples * ratio)
-print(validated)
 ```
 
-Também é possível utilizar ponto e vírgula:
+Uma variável é declarada uma única vez por escopo. Atribuição/redefinição ainda não está implementada.
+
+## 5. Controle de fluxo
+
+Condicionais exigem condições booleanas e blocos delimitados por chaves:
 
 ```nyx
-let samples = 120;
-let ratio = 0.875;
-print(samples * ratio);
+if (10 > 3) {
+    print("condição verdadeira")
+} else {
+    print("condição falsa")
+}
 ```
 
-Uma variável é declarada uma única vez por escopo global nesta versão. Reatribuição, blocos e escopos locais ainda não fazem parte do MVP.
+O ramo `else` é opcional. Laços `while` reavaliam uma condição booleana antes de cada iteração:
 
-## 5. Operadores e precedência
+```nyx
+while (false) {
+    print("este bloco não será executado")
+}
+```
+
+Os blocos criam escopos locais. Variáveis declaradas dentro deles não ficam visíveis fora do bloco. Como atribuição ainda não existe, laços cujo estado depende de mutação de variáveis ainda não são práticos; a implementação de atribuição é uma evolução necessária para laços gerais.
+
+## 6. Operadores e precedência
 
 Da menor para a maior precedência:
 
@@ -64,40 +75,50 @@ Da menor para a maior precedência:
 7. `not`, `+` unário, `-` unário
 8. Literais, identificadores e parênteses
 
-Operadores aritméticos aceitam apenas valores numéricos. Operadores lógicos aceitam apenas booleanos. Comparações relacionais são numéricas. Igualdade compara tipo e valor.
+Operadores aritméticos aceitam valores numéricos. Operadores lógicos e condições exigem booleanos. Comparações relacionais são numéricas. Igualdade compara tipo e valor.
 
-## 6. Gramática EBNF
-
-A separação por linha é reconhecida pelo parser a partir das posições dos tokens. O ponto e vírgula é um separador explícito opcional:
+## 7. Gramática EBNF
 
 ```ebnf
-program       = { statement } ;
-statement     = declaration | print_statement ;
-terminator    = ";" | line_break | EOF ;
-declaration   = "let" , identifier , "=" , expression , terminator ;
-print_statement = "print" , "(" , expression , ")" , terminator ;
-expression    = logical_or ;
-logical_or    = logical_and , { "or" , logical_and } ;
-logical_and   = equality , { "and" , equality } ;
-equality      = comparison , { ( "==" | "!=" ) , comparison } ;
-comparison    = term , { ( "<" | "<=" | ">" | ">=" ) , term } ;
-term          = factor , { ( "+" | "-" ) , factor } ;
-factor        = unary , { ( "*" | "/" | "%" ) , unary } ;
-unary         = ( "not" | "+" | "-" ) , unary | primary ;
-primary       = number | string | "true" | "false" | "null"
-              | identifier | "(" , expression , ")" ;
-number        = integer | float ;
-identifier    = ( letter | "_" ) , { letter | digit | "_" } ;
+program          = { statement } ;
+statement        = declaration | print_statement | if_statement
+                 | while_statement | block ;
+declaration      = "let" , identifier , "=" , expression , terminator ;
+print_statement  = "print" , "(" , expression , ")" , terminator ;
+if_statement     = "if" , "(" , expression , ")" , block
+                 , [ "else" , block ] ;
+while_statement  = "while" , "(" , expression , ")" , block ;
+block            = "{" , { statement } , "}" ;
+terminator       = ";" | line_break | "}" | EOF ;
+expression       = logical_or ;
+logical_or       = logical_and , { "or" , logical_and } ;
+logical_and      = equality , { "and" , equality } ;
+equality         = comparison , { ( "==" | "!=" ) , comparison } ;
+comparison       = term , { ( "<" | "<=" | ">" | ">=" ) , term } ;
+term             = factor , { ( "+" | "-" ) , factor } ;
+factor           = unary , { ( "*" | "/" | "%" ) , unary } ;
+unary            = ( "not" | "+" | "-" ) , unary | primary ;
+primary          = number | string | "true" | "false" | "null"
+                 | identifier | "(" , expression , ")" ;
+number           = integer | float ;
+identifier       = ( letter | "_" ) , { letter | digit | "_" } ;
 ```
 
-## 7. Diagnósticos
+## 8. Escopos e semântica
 
-Erros léxicos, sintáticos e de execução informam linha e coluna no formato `[NYX:Lx:Cy]`. O interpretador interrompe a execução no primeiro erro.
+- O programa inicia em um escopo global.
+- Cada bloco cria um escopo local.
+- A resolução de nomes procura primeiro o escopo mais interno e segue em direção ao global.
+- Declarações duplicadas no mesmo escopo geram erro.
+- Condições não booleanas geram erro de execução.
+- O interpretador interrompe a execução no primeiro erro.
 
-## 8. Limites conhecidos
+## 9. Diagnósticos e limites
 
-Esta versão ainda não implementa funções definidas pelo usuário, condicionais, laços, coleções, módulos, inferência estática, sistema de tipos em compilação, IR, otimização, operações tabulares, álgebra científica ou integração com IA. Esses recursos não devem ser anunciados como disponíveis.
+Erros léxicos, sintáticos e de execução informam linha e coluna no formato `[NYX:Lx:Cy]`.
 
-## 9. Independência
+Ainda não existem atribuição, funções, coleções, módulos, inferência estática, sistema de tipos em compilação, IR, otimização, operações tabulares, álgebra científica ou integração nativa com IA. A ausência de atribuição limita laços `while` a condições que possam terminar sem alteração de estado; atribuição é o próximo recurso necessário para tornar a iteração geral útil.
 
-O lexer, parser, nós de AST, regras de precedência e interpretador são componentes próprios do projeto. Python é apenas a linguagem hospedeira do protótipo 0.1; não é a gramática nem o mecanismo de avaliação delegado da NYX.
+## 10. Independência
+
+Lexer, parser, AST, regras de precedência e interpretador são componentes próprios. Python é apenas a linguagem hospedeira do protótipo alfa.

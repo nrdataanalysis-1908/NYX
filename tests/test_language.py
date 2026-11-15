@@ -103,17 +103,14 @@ def test_if_without_else():
 
 
 def test_while_repeats_until_condition_is_false():
-    source = ''' 
+    source = '''
 let index = 0
 while (index < 4) {
     print(index)
-    let next = index + 1
+    index = index + 1
 }
 '''
-    # NYX currently has immutable bindings; loop progress uses a scoped
-    # declaration strategy only if assignment exists. This test is replaced
-    # below by a finite loop over a condition that is initially false.
-    assert execute('while (false) { print("never") }') == []
+    assert execute(source) == [0, 1, 2, 3]
 
 
 def test_nested_control_flow_and_block_scope():

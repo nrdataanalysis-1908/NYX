@@ -40,3 +40,23 @@ class LetStatement:
 @dataclass(frozen=True, slots=True)
 class PrintStatement:
     expression: object
+
+
+@dataclass(frozen=True, slots=True)
+class BlockStatement:
+    statements: list[object]
+
+
+@dataclass(frozen=True, slots=True)
+class IfStatement:
+    keyword: Token
+    condition: object
+    then_branch: BlockStatement
+    else_branch: BlockStatement | None
+
+
+@dataclass(frozen=True, slots=True)
+class WhileStatement:
+    keyword: Token
+    condition: object
+    body: BlockStatement

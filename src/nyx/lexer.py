@@ -54,6 +54,7 @@ class Lexer:
             "+": TokenType.PLUS, "-": TokenType.MINUS, "*": TokenType.STAR,
             "/": TokenType.SLASH, "%": TokenType.PERCENT,
             "(": TokenType.LEFT_PAREN, ")": TokenType.RIGHT_PAREN,
+            "[": TokenType.LEFT_BRACKET, "]": TokenType.RIGHT_BRACKET,
             "{": TokenType.LEFT_BRACE, "}": TokenType.RIGHT_BRACE,
             ",": TokenType.COMMA, ";": TokenType.SEMICOLON,
         }

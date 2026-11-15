@@ -1,6 +1,6 @@
 """Recursive-descent parser for NYX."""
 from .ast_nodes import (
-    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, FunctionStatement, Grouping,
+    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
     Unary, Variable, WhileStatement,
 )
@@ -47,16 +47,20 @@ class Parser:
             self._consume(TokenType.RIGHT_PAREN, "Expected ')' after the value.")
             self._consume_terminator("Expected ';' or a line break after the print statement.")
             return PrintStatement(value)
-        if self._check(TokenType.IDENTIFIER) and self._check_next(TokenType.EQUAL):
-            name = self._advance()
-            self._advance()
-            value = self._expression()
-            self._consume_terminator("Expected ';' or a line break after the assignment.")
-            return AssignStatement(name, value)
-        if self._check(TokenType.IDENTIFIER) and self._check_next(TokenType.LEFT_PAREN):
+        if self._check(TokenType.IDENTIFIER):
             expression = self._expression()
-            self._consume_terminator("Expected ';' or a line break after the function call.")
-            return ExpressionStatement(expression)
+            if self._match(TokenType.EQUAL):
+                value = self._expression()
+                self._consume_terminator("Expected ';' or a line break after the assignment.")
+                if isinstance(expression, Variable):
+                    return AssignStatement(expression.name, value)
+                if isinstance(expression, Index):
+                    return IndexAssign(expression.object, expression.bracket, expression.index, value)
+                self._error(self._previous(), "The assignment target must be a variable or list element.")
+            if isinstance(expression, Call):
+                self._consume_terminator("Expected ';' or a line break after the function call.")
+                return ExpressionStatement(expression)
+            self._error(self._peek(), "Expected an assignment or function call.")
         if self._match(TokenType.IF):
             keyword = self._previous()
             self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'if'.")
@@ -135,15 +139,23 @@ class Parser:
         return self._call()
     def _call(self):
         expr = self._primary()
-        while self._match(TokenType.LEFT_PAREN):
-            paren = self._previous()
-            arguments = []
-            if not self._check(TokenType.RIGHT_PAREN):
-                while True:
-                    arguments.append(self._expression())
-                    if not self._match(TokenType.COMMA): break
-            self._consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.")
-            expr = Call(expr, paren, arguments)
+        while True:
+            if self._match(TokenType.LEFT_PAREN):
+                paren = self._previous()
+                arguments = []
+                if not self._check(TokenType.RIGHT_PAREN):
+                    while True:
+                        arguments.append(self._expression())
+                        if not self._match(TokenType.COMMA): break
+                self._consume(TokenType.RIGHT_PAREN, "Expected ')' after arguments.")
+                expr = Call(expr, paren, arguments)
+            elif self._match(TokenType.LEFT_BRACKET):
+                bracket = self._previous()
+                index = self._expression()
+                self._consume(TokenType.RIGHT_BRACKET, "Expected ']' after the list index.")
+                expr = Index(expr, bracket, index)
+            else:
+                break
         return expr
     def _primary(self):
         if self._match(TokenType.FALSE): return Literal(False)
@@ -155,7 +167,16 @@ class Parser:
             expr = self._expression()
             self._consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.")
             return Grouping(expr)
-        self._error(self._peek(), "Expected a literal, variable, call or parenthesized expression.")
+        if self._match(TokenType.LEFT_BRACKET):
+            elements = []
+            if not self._check(TokenType.RIGHT_BRACKET):
+                while True:
+                    elements.append(self._expression())
+                    if not self._match(TokenType.COMMA): break
+                    if self._check(TokenType.RIGHT_BRACKET): break
+            self._consume(TokenType.RIGHT_BRACKET, "Expected ']' after list elements.")
+            return ListLiteral(elements)
+        self._error(self._peek(), "Expected a literal, list, variable, call or parenthesized expression.")
 
     def _match(self, *types):
         if any(self._check(t) for t in types):

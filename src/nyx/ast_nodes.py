@@ -19,6 +19,20 @@ class Binary:
 @dataclass(frozen=True, slots=True)
 class Grouping: expression: object
 @dataclass(frozen=True, slots=True)
+class ListLiteral:
+    elements: list[object]
+@dataclass(frozen=True, slots=True)
+class Index:
+    object: object
+    bracket: Token
+    index: object
+@dataclass(frozen=True, slots=True)
+class IndexAssign:
+    object: object
+    bracket: Token
+    index: object
+    value: object
+@dataclass(frozen=True, slots=True)
 class Call:
     callee: object
     paren: Token

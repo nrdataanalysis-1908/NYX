@@ -1,12 +1,30 @@
 """Tree-walk interpreter for the NYX language."""
 from dataclasses import dataclass
 from .ast_nodes import (
-    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, FunctionStatement, Grouping,
+    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
     Unary, Variable, WhileStatement,
 )
 from .errors import RuntimeNyxError
 from .tokens import TokenType
+
+
+class _NyxList:
+    """Mutable list value owned by the NYX runtime."""
+    def __init__(self, items):
+        self.items = list(items)
+
+    def __repr__(self):
+        return "[" + ", ".join(repr(item) for item in self.items) + "]"
+
+
+@dataclass
+class _NativeFunction:
+    name: str
+    arity: int
+    implementation: object
+
+    def __repr__(self): return f"<native fn {self.name}>"
 
 
 class _ReturnSignal(Exception):
@@ -25,6 +43,10 @@ class Interpreter:
     def __init__(self, output=print):
         self.scopes: list[dict[str, object]] = [{}]
         self.output = output
+        self.builtins = {
+            "len": _NativeFunction("len", 1, self._builtin_len),
+            "append": _NativeFunction("append", 2, self._builtin_append),
+        }
 
     def interpret(self, statements):
         try:
@@ -51,6 +73,11 @@ class Interpreter:
                     scope[name] = self._evaluate(statement.value)
                     break
             else: self._runtime_error(statement.name, f"Cannot assign to undefined variable '{name}'.")
+        elif isinstance(statement, IndexAssign):
+            target = self._evaluate(statement.object)
+            index = self._evaluate(statement.index)
+            value = self._evaluate(statement.value)
+            self._set_index(target, index, value, statement.bracket)
         elif isinstance(statement, PrintStatement): self.output(self._evaluate(statement.expression))
         elif isinstance(statement, ExpressionStatement): self._evaluate(statement.expression)
         elif isinstance(statement, BlockStatement):
@@ -78,6 +105,7 @@ class Interpreter:
             name = expression.name.lexeme
             for scope in reversed(self.scopes):
                 if name in scope: return scope[name]
+            if name in self.builtins: return self.builtins[name]
             self._runtime_error(expression.name, f"Undefined variable '{name}'.")
         if isinstance(expression, Unary):
             right = self._evaluate(expression.right)
@@ -87,13 +115,24 @@ class Interpreter:
             self._require_number(right, expression.operator)
             return -right if expression.operator.type == TokenType.MINUS else right
         if isinstance(expression, Binary): return self._binary(expression)
+        if isinstance(expression, ListLiteral):
+            return _NyxList([self._evaluate(element) for element in expression.elements])
+        if isinstance(expression, Index):
+            target = self._evaluate(expression.object)
+            index = self._evaluate(expression.index)
+            return self._get_index(target, index, expression.bracket)
         if isinstance(expression, Call): return self._call(expression)
         raise RuntimeNyxError("Unsupported expression node.")
 
     def _call(self, expression):
         callee = self._evaluate(expression.callee)
+        if isinstance(callee, _NativeFunction):
+            if len(expression.arguments) != callee.arity:
+                self._runtime_error(expression.paren, f"Function '{callee.name}' expects {callee.arity} argument(s), got {len(expression.arguments)}.")
+            arguments = [self._evaluate(arg) for arg in expression.arguments]
+            return callee.implementation(arguments, expression.paren)
         if not isinstance(callee, _UserFunction):
-            self._runtime_error(expression.paren, "Only user-defined functions can be called.")
+            self._runtime_error(expression.paren, "Only functions can be called.")
         expected = len(callee.declaration.parameters)
         if len(expression.arguments) != expected:
             self._runtime_error(expression.paren, f"Function '{callee.declaration.name.lexeme}' expects {expected} argument(s), got {len(expression.arguments)}.")
@@ -109,6 +148,37 @@ class Interpreter:
             return None
         finally:
             self.scopes = previous_scopes
+
+    def _builtin_len(self, arguments, token):
+        value = arguments[0]
+        if not isinstance(value, _NyxList):
+            self._runtime_error(token, "len() expects a List value.")
+        return len(value.items)
+
+    def _builtin_append(self, arguments, token):
+        target, value = arguments
+        if not isinstance(target, _NyxList):
+            self._runtime_error(token, "append() expects its first argument to be a List value.")
+        target.items.append(value)
+        return None
+
+    def _get_index(self, target, index, token):
+        if not isinstance(target, _NyxList):
+            self._runtime_error(token, "Indexing requires a List value.")
+        if type(index) is not int:
+            self._runtime_error(token, "List indices must be Integer values.")
+        if index < 0 or index >= len(target.items):
+            self._runtime_error(token, f"List index {index} is out of range for length {len(target.items)}.")
+        return target.items[index]
+
+    def _set_index(self, target, index, value, token):
+        if not isinstance(target, _NyxList):
+            self._runtime_error(token, "Indexed assignment requires a List value.")
+        if type(index) is not int:
+            self._runtime_error(token, "List indices must be Integer values.")
+        if index < 0 or index >= len(target.items):
+            self._runtime_error(token, f"List index {index} is out of range for length {len(target.items)}.")
+        target.items[index] = value
 
     def _binary(self, expression):
         op = expression.operator
@@ -137,9 +207,16 @@ class Interpreter:
             return {TokenType.LESS: left < right, TokenType.LESS_EQUAL: left <= right,
                     TokenType.GREATER: left > right, TokenType.GREATER_EQUAL: left >= right}[op.type]
         if op.type in (TokenType.EQUAL_EQUAL, TokenType.BANG_EQUAL):
-            equal = type(left) is type(right) and left == right
+            equal = self._values_equal(left, right)
             return equal if op.type == TokenType.EQUAL_EQUAL else not equal
         self._runtime_error(op, "Unsupported binary operator.")
+
+    def _values_equal(self, left, right):
+        if isinstance(left, _NyxList) and isinstance(right, _NyxList):
+            return len(left.items) == len(right.items) and all(
+                self._values_equal(a, b) for a, b in zip(left.items, right.items)
+            )
+        return type(left) is type(right) and left == right
 
     def _logical_right(self, expression, operator):
         value = self._evaluate(expression)

@@ -199,3 +199,69 @@ def test_duplicate_function_parameter_is_rejected():
 def test_return_outside_function_is_rejected():
     with pytest.raises(RuntimeNyxError, match="outside a function"):
         execute('return 10')
+
+
+def test_empty_and_nested_list_literals():
+    assert execute('let empty = []\nlet matrix = [[1, 2], [3, 4]]\nprint(len(empty))\nprint(matrix[1][0])') == [0, 3]
+
+
+def test_heterogeneous_lists_and_zero_based_indexing():
+    assert execute('let values = [10, "NYX", true, null]\nprint(values[0])\nprint(values[1])\nprint(values[2])\nprint(values[3])') == [10, "NYX", True, None]
+
+
+def test_list_element_assignment():
+    assert execute('let values = [1, 2, 3]\nvalues[1] = 20\nprint(values[1])') == [20]
+
+
+def test_nested_list_element_assignment():
+    assert execute('let matrix = [[1, 2], [3, 4]]\nmatrix[1][0] = 30\nprint(matrix[1][0])') == [30]
+
+
+def test_list_aliases_share_mutations():
+    assert execute('let first = [1]\nlet second = first\nappend(second, 2)\nprint(len(first))\nprint(first[1])') == [2, 2]
+
+
+def test_append_mutates_and_returns_null():
+    assert execute('let values = [1]\nlet result = append(values, "x")\nprint(values[1])\nprint(result)') == ["x", None]
+
+
+def test_list_length_is_zero_for_empty_list():
+    assert execute('print(len([]))') == [0]
+
+
+def test_list_equality_is_structural_and_type_strict():
+    assert execute('print([1, [2]] == [1, [2]])\nprint([1] == [true])') == [True, False]
+
+
+@pytest.mark.parametrize("source,message", [
+    ('let values = [1]\nprint(values[1])', "out of range"),
+    ('let values = [1]\nprint(values[-1])', "out of range"),
+    ('let values = [1]\nprint(values[0.5])', "Integer values"),
+    ('let values = [1]\nprint(values[true])', "Integer values"),
+    ('let value = 1\nprint(value[0])', "requires a List"),
+    ('append(1, 2)', "append() expects"),
+    ('len("text")', "len() expects"),
+    ('len()', "expects 1 argument"),
+    ('append([], 1, 2)', "expects 2 argument"),
+])
+def test_list_runtime_errors_are_explicit(source, message):
+    with pytest.raises(RuntimeNyxError, match=message):
+        execute(source)
+
+
+def test_indexed_assignment_rejects_out_of_range_index():
+    with pytest.raises(RuntimeNyxError, match="out of range"):
+        execute('let values = [1]\nvalues[2] = 9')
+
+
+def test_indexed_assignment_rejects_non_list_target():
+    with pytest.raises(RuntimeNyxError, match="requires a List"):
+        execute('let value = 1\nvalue[0] = 9')
+
+
+def test_list_expression_can_be_passed_to_user_function():
+    assert execute('fn first(values) { return values[0] }\nprint(first([42]))') == [42]
+
+
+def test_append_can_receive_nested_list():
+    assert execute('let values = []\nappend(values, [1, 2])\nprint(values[0][1])') == [2]

@@ -1,6 +1,6 @@
 # Especificação da linguagem NYX
 
-Versão da especificação: 0.5
+Versão da especificação: 0.6
 Estado: alfa — frontend próprio e interpretador tree-walk.
 
 ## 1. Identidade e objetivo
@@ -103,17 +103,45 @@ print(factorial(6))
 
 Não há ainda parâmetros nomeados, valores padrão, sobrecarga, funções anônimas, closures mutáveis especificadas como recurso de primeira classe ou funções nativas integradas à linguagem.
 
-## 8. Gramática (EBNF)
+## 8. Coleções e listas
+
+A NYX possui o tipo nativo mutável `List`. Listas podem ser vazias, heterogêneas e aninhadas.
+
+```nyx
+let samples = [12, 18, 24]
+let matrix = [[1, 2], [3, 4]]
+let mixed = ["NYX", 0.6, true, null]
+
+print(samples[0])
+samples[1] = 20
+append(samples, 30)
+print(len(samples))
+print(matrix[1][0])
+```
+
+- Os índices são inteiros e começam em zero.
+- Índices negativos, fracionários, booleanos ou fora dos limites geram erro de execução.
+- A leitura usa `lista[indice]`; a atribuição usa `lista[indice] = valor`.
+- `len(lista)` devolve a quantidade de elementos.
+- `append(lista, valor)` acrescenta um elemento ao final e devolve `null`.
+- Listas são mutáveis e atribuídas por referência: duas variáveis que recebem a mesma lista observam as mesmas alterações.
+- Passar uma lista a uma função preserva essa identidade compartilhada.
+- A igualdade entre listas é estrutural e recursiva; valores escalares continuam exigindo igualdade de tipo e valor.
+- Listas ainda não possuem slicing, remoção, ordenação, compreensão, iteração `for` ou operações vetorizadas.
+
+## 9. Gramática (EBNF)
 
 ```ebnf
 program          = { statement } , EOF ;
 statement        = function_decl | declaration | assignment | print_stmt
-                 | return_stmt | if_stmt | while_stmt | block ;
+                 | expression_stmt | return_stmt | if_stmt | while_stmt | block ;
 function_decl    = "fn" , identifier , "(" , [ parameters ] , ")" , block ;
 parameters       = identifier , { "," , identifier } ;
 arguments        = expression , { "," , expression } ;
 declaration      = "let" , identifier , "=" , expression , terminator ;
-assignment       = identifier , "=" , expression , terminator ;
+assignment       = ( identifier | indexed_target ) , "=" , expression , terminator ;
+indexed_target   = identifier , { "[" , expression , "]" } ;
+expression_stmt  = call , terminator ;
 print_stmt       = "print" , "(" , expression , ")" , terminator ;
 return_stmt      = "return" , [ expression ] , terminator ;
 if_stmt          = "if" , "(" , expression , ")" , block , [ "else" , block ] ;
@@ -128,23 +156,24 @@ comparison       = term , { ( "<" | "<=" | ">" | ">=" ) , term } ;
 term             = factor , { ( "+" | "-" ) , factor } ;
 factor           = unary , { ( "*" | "/" | "%" ) , unary } ;
 unary            = ( "not" | "+" | "-" ) , unary | call ;
-call             = primary , { "(" , [ arguments ] , ")" } ;
+call             = primary , { "(" , [ arguments ] , ")" | "[" , expression , "]" } ;
 primary          = number | string | "true" | "false" | "null"
-                 | identifier | "(" , expression , ")" ;
+                 | identifier | list_literal | "(" , expression , ")" ;
+list_literal     = "[" , [ expression , { "," , expression } , [ "," ] ] , "]" ;
 ```
 
 `line_terminator` é uma condição do parser baseada nas posições de linha dos tokens, não um token léxico independente.
 
-## 9. Pipeline e diagnósticos
+## 10. Pipeline e diagnósticos
 
 O pipeline atual é: código-fonte → lexer → tokens → parser → AST → interpretador tree-walk. Erros léxicos, sintáticos e de execução identificam linha e coluna no formato `[NYX:Lx:Cy]`. O primeiro erro interrompe a execução.
 
-## 10. Limitações explícitas
+## 11. Limitações explícitas
 
-Ainda não implementados: coleções nativas, módulos/imports, sistema de tipos estático, inferência, genéricos, classes/traits, `for`, `break`, `continue`, exceções da linguagem, análise semântica estática, IR, compilador, bytecode/VM, concorrência, paralelismo, gerenciamento próprio de memória, bibliotecas científicas, engine tabular e integrações nativas de IA.
+Ainda não implementados: módulos/imports, sistema de tipos estático, inferência, genéricos, classes/traits, `for`, `break`, `continue`, slicing e operações avançadas de coleções, exceções da linguagem, análise semântica estática, IR, compilador, bytecode/VM, concorrência, paralelismo, gerenciamento próprio de memória, bibliotecas científicas, engine tabular e integrações nativas de IA.
 
 Esses itens são planejamento, não capacidades atuais.
 
-## 11. Evolução
+## 12. Evolução
 
 A sintaxe, a semântica e os testes de conformidade pertencem à NYX e devem permanecer independentes da tecnologia hospedeira. A evolução separará linguagem, runtime, bibliotecas científicas e integrações externas.

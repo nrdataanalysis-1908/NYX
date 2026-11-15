@@ -38,6 +38,8 @@ class TokenType(Enum):
     LEFT_BRACE = auto()
     RIGHT_BRACE = auto()
     COMMA = auto()
+    LEFT_BRACKET = auto()
+    RIGHT_BRACKET = auto()
     SEMICOLON = auto()
     EOF = auto()
 

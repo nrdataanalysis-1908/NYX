@@ -34,6 +34,16 @@ A evolução da linguagem está organizada em três eixos:
 
 Esses eixos serão implementados gradualmente sobre uma arquitetura comum.
 
+## Documentação
+
+| Documento | Descrição |
+|---|---|
+| [Especificação da linguagem](docs/ESPECIFICACAO_LINGUAGEM.md) | Primeira proposta de sintaxe, palavras reservadas, tipos e gramática EBNF |
+| [Arquitetura](docs/ARQUITETURA.md) | Componentes e pipeline de execução |
+| [Roadmap](docs/ROADMAP.md) | Fases de desenvolvimento e critérios de conclusão |
+
+A especificação da linguagem está em estado de rascunho (versão 0.1.0-draft). Suas construções são propostas de projeto e ainda não devem ser tratadas como recursos executáveis.
+
 ## Arquitetura planejada
 
 - Frontend: análise léxica, sintática e semântica.

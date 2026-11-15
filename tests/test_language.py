@@ -33,7 +33,8 @@ def test_semicolons_remain_valid_and_optional():
 
 
 def test_expression_can_continue_on_next_line():
-    assert execute('let total = 10 +\n    5 * 2\nprint(total)') == [20]
+    source = 'let total = 10 +\n    5 * 2\nprint(total)'
+    assert execute(source) == [20]
 
 
 def test_utf8_bom_is_ignored_at_source_start():
@@ -46,6 +47,14 @@ def test_operator_precedence_and_grouping():
 
 def test_boolean_logic_and_comparison():
     assert execute('print(10 > 3 and not false);') == [True]
+
+
+def test_logical_operators_use_short_circuit_evaluation():
+    assert execute('print(false and missing)\nprint(true or missing)') == [False, True]
+
+
+def test_unary_numeric_operators():
+    assert execute('print(-5)\nprint(+3.5)') == [-5, 3.5]
 
 
 def test_string_and_null_literals():
@@ -68,14 +77,58 @@ def test_duplicate_declaration_is_rejected():
         execute('let x = 1; let x = 2;')
 
 
+def test_assignment_updates_nearest_visible_scope():
+    source = '''
+let value = 1
+{
+    let value = 2
+    value = 3
+    print(value)
+}
+print(value)
+'''
+    assert execute(source) == [3, 1]
+
+
+def test_assignment_updates_outer_scope_when_not_shadowed():
+    source = '''
+let value = 1
+{
+    value = 8
+}
+print(value)
+'''
+    assert execute(source) == [8]
+
+
+def test_assignment_to_undefined_variable_is_rejected():
+    with pytest.raises(RuntimeNyxError, match="undefined variable"):
+        execute('missing = 10')
+
+
 def test_division_by_zero_is_reported():
     with pytest.raises(RuntimeNyxError, match="Division by zero"):
         execute('print(1 / 0);')
 
 
+def test_modulo_by_zero_is_reported():
+    with pytest.raises(RuntimeNyxError, match="Modulo by zero"):
+        execute('print(5 % 0)')
+
+
 def test_strict_boolean_types():
     with pytest.raises(RuntimeNyxError, match="boolean operands"):
         execute('print(1 and true);')
+
+
+def test_non_boolean_if_condition_is_rejected():
+    with pytest.raises(RuntimeNyxError, match="boolean operands"):
+        execute('if (1) { print("invalid") }')
+
+
+def test_non_boolean_while_condition_is_rejected():
+    with pytest.raises(RuntimeNyxError, match="boolean operands"):
+        execute('while (1) { print("invalid") }')
 
 
 def test_invalid_character_is_reported():
@@ -100,6 +153,10 @@ def test_if_else_false_branch():
 
 def test_if_without_else():
     assert execute('if (2 > 1) { print("ok") }') == ["ok"]
+
+
+def test_empty_block_is_valid():
+    assert execute('if (true) { }\nprint("after")') == ["after"]
 
 
 def test_while_repeats_until_condition_is_false():

@@ -38,7 +38,7 @@ print(title)
 print(samples * ratio)
 ```
 
-Uma variável é declarada uma única vez por escopo. Atribuição/redefinição ainda não está implementada.
+Uma variável é declarada uma única vez por escopo. Atribuição com `nome = expressão` atualiza uma variável já declarada no escopo atual ou em um escopo externo.
 
 ## 5. Controle de fluxo
 
@@ -81,9 +81,9 @@ Operadores aritméticos aceitam valores numéricos. Operadores lógicos e condi�
 
 ```ebnf
 program          = { statement } ;
-statement        = declaration | print_statement | if_statement
+statement        = declaration | assignment | print_statement | if_statement
                  | while_statement | block ;
-declaration      = "let" , identifier , "=" , expression , terminator ;
+declaration      = "let" , identifier , "=" , expression , terminator ;\nassignment       = identifier , "=" , expression , terminator ;
 print_statement  = "print" , "(" , expression , ")" , terminator ;
 if_statement     = "if" , "(" , expression , ")" , block
                  , [ "else" , block ] ;
@@ -117,7 +117,7 @@ identifier       = ( letter | "_" ) , { letter | digit | "_" } ;
 
 Erros léxicos, sintáticos e de execução informam linha e coluna no formato `[NYX:Lx:Cy]`.
 
-Ainda não existem atribuição, funções, coleções, módulos, inferência estática, sistema de tipos em compilação, IR, otimização, operações tabulares, álgebra científica ou integração nativa com IA. A ausência de atribuição limita laços `while` a condições que possam terminar sem alteração de estado; atribuição é o próximo recurso necessário para tornar a iteração geral útil.
+Ainda não existem funções, coleções, módulos, inferência estática, sistema de tipos em compilação, IR, otimização, operações tabulares, álgebra científica ou integração nativa com IA. A ausência de atribuição limita laços `while` a condições que possam terminar sem alteração de estado; atribuição é o próximo recurso necessário para tornar a iteração geral útil.
 
 ## 10. Independência
 

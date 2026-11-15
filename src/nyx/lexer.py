@@ -1,4 +1,4 @@
-"""Lexer for the first NYX language specification."""
+"""Lexer for the NYX language."""
 from .errors import LexError
 from .tokens import Token, TokenType
 
@@ -6,6 +6,9 @@ from .tokens import Token, TokenType
 _KEYWORDS = {
     "let": TokenType.LET,
     "print": TokenType.PRINT,
+    "if": TokenType.IF,
+    "else": TokenType.ELSE,
+    "while": TokenType.WHILE,
     "true": TokenType.TRUE,
     "false": TokenType.FALSE,
     "null": TokenType.NULL,
@@ -17,7 +20,6 @@ _KEYWORDS = {
 
 class Lexer:
     def __init__(self, source: str):
-        # UTF-8 BOM is a file signature, not part of the NYX source language.
         self.source = source[1:] if source.startswith("\ufeff") else source
         self.tokens: list[Token] = []
         self.start = 0
@@ -71,6 +73,7 @@ class Lexer:
             "+": TokenType.PLUS, "-": TokenType.MINUS, "*": TokenType.STAR,
             "/": TokenType.SLASH, "%": TokenType.PERCENT,
             "(": TokenType.LEFT_PAREN, ")": TokenType.RIGHT_PAREN,
+            "{": TokenType.LEFT_BRACE, "}": TokenType.RIGHT_BRACE,
             ";": TokenType.SEMICOLON,
         }
         if char in single:
@@ -86,9 +89,7 @@ class Lexer:
             self._add(TokenType.LESS_EQUAL if self._match("=") else TokenType.LESS)
         elif char == ">":
             self._add(TokenType.GREATER_EQUAL if self._match("=") else TokenType.GREATER)
-        elif char in " \r\t":
-            return
-        elif char == "\n":
+        elif char in " \r\t\n":
             return
         elif char == "#":
             while self._peek() not in ("\n", "\0"):

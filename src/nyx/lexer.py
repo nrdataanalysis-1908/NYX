@@ -17,7 +17,8 @@ _KEYWORDS = {
 
 class Lexer:
     def __init__(self, source: str):
-        self.source = source
+        # UTF-8 BOM is a file signature, not part of the NYX source language.
+        self.source = source[1:] if source.startswith("\ufeff") else source
         self.tokens: list[Token] = []
         self.start = 0
         self.current = 0

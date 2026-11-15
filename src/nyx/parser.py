@@ -20,16 +20,27 @@ class Parser:
             name = self._consume(TokenType.IDENTIFIER, "Expected a variable name after 'let'.")
             self._consume(TokenType.EQUAL, "Expected '=' after the variable name.")
             value = self._expression()
-            self._consume(TokenType.SEMICOLON, "Expected ';' after the declaration.")
+            self._consume_terminator("Expected ';' or a line break after the declaration.")
             return LetStatement(name, value)
         if self._match(TokenType.PRINT):
             self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'print'.")
             value = self._expression()
             self._consume(TokenType.RIGHT_PAREN, "Expected ')' after the value.")
-            self._consume(TokenType.SEMICOLON, "Expected ';' after the print statement.")
+            self._consume_terminator("Expected ';' or a line break after the print statement.")
             return PrintStatement(value)
         token = self._peek()
         self._error(token, "Expected a statement: 'let' or 'print'.")
+
+    def _consume_terminator(self, message: str) -> None:
+        if self._match(TokenType.SEMICOLON):
+            return
+        previous = self._previous()
+        current = self._peek()
+        # A physical line break separates statements. Expressions may still
+        # continue across lines when the grammar expects another operand.
+        if current.type == TokenType.EOF or current.line > previous.line:
+            return
+        self._error(current, message)
 
     def _expression(self):
         return self._or()

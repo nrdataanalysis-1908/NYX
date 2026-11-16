@@ -34,7 +34,7 @@ jobs:
           python -m pip install -e ".[dev]" matplotlib numpy
       - name: Execute benchmark suite
         run: |
-          python benchmarks/run_benchmarks.py --warmups 3 --repetitions "${{ inputs.repetitions }}"
+          python benchmarks/run_benchmarks.py --warmups 3 --repetitions "${{ inputs.repetitions || '25' }}"
       - name: Publish measured CSV, metadata and charts
         run: |
           git config user.name "github-actions[bot]"

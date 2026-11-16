@@ -285,3 +285,320 @@ Distribuído sob a licença Apache License 2.0. Consulte o arquivo [LICENSE](LIC
 Uma linguagem em construção. Uma arquitetura guiada por rigor, interoperabilidade e evolução verificável.
 
 </div>
+
+
+
+## 22. Visão sistêmica: da linguagem ao produto de dados
+
+A ambição da NYX exige que a linguagem seja pensada como um sistema de componentes cooperantes. O código-fonte é apenas a primeira interface. Ao longo da evolução, a plataforma deverá definir como programas são analisados, como valores são representados, como dados são movimentados, como operações são executadas e como resultados podem ser auditados.
+
+<p align="center"><img src="assets/nyx-architecture-map.svg" alt="Visão sistêmica das camadas da NYX" width="100%"></p>
+
+### Componentes e fronteiras
+
+| Componente | Entrada | Saída | Contrato que deverá preservar |
+|---|---|---|---|
+| Frontend | Código-fonte | Tokens e AST | Gramática e localização |
+| Semântica | AST e ambiente | Programa validado | Regras de nomes e tipos |
+| IR | Programa validado | Grafo ou sequência intermediária | Equivalência semântica |
+| Planejador | IR e contexto | Plano de execução | Determinismo e custo explícito |
+| Runtime | Plano e valores | Resultado ou erro | Semântica operacional |
+| Bibliotecas | Valores e estruturas | Operações especializadas | Tipos e invariantes |
+| Conectores | Solicitações e credenciais | Dados externos | Segurança e contratos |
+| Observabilidade | Eventos de execução | Logs e métricas | Rastreabilidade e privacidade |
+
+### Separação entre linguagem, biblioteca e infraestrutura
+
+Essa separação evita que uma decisão de implementação se torne uma regra implícita da linguagem. Uma operação científica, por exemplo, deverá possuir semântica definida independentemente do backend numérico escolhido. Da mesma forma, um conector SQL não deve alterar o comportamento de atribuição, escopo ou tipos do núcleo.
+
+## 23. Modelo de execução: presente e evolução
+
+<p align="center"><img src="assets/nyx-runtime-pipeline.svg" alt="Fluxo de execução atual do interpretador NYX" width="100%"></p>
+
+### Implementação disponível
+
+O protótipo atual percorre a AST por meio de um interpretador tree-walk. Isso favorece a validação inicial da gramática e da semântica, reduzindo o número de componentes necessários para experimentar a linguagem.
+
+### Limitações desse modelo
+
+- A avaliação depende diretamente da estrutura da AST.
+- Não existe representação intermediária independente.
+- Não existe bytecode ou máquina virtual.
+- Não existe compilação para código nativo.
+- Não há otimizador de planos ou instruções.
+- Não há gerenciamento próprio de memória.
+- Não há paralelismo de execução implementado.
+
+### Caminho técnico possível
+
+1. Formalizar os contratos semânticos do núcleo.
+2. Separar a análise semântica da avaliação.
+3. Definir uma representação intermediária estável.
+4. Implementar validação e transformação da IR.
+5. Criar um backend de execução controlado.
+6. Medir custo de interpretação e de execução.
+7. Avaliar VM, bytecode ou compilação nativa conforme evidência técnica.
+
+A sequência é uma direção de engenharia. Não implica que exista uma migração em andamento ou que um backend específico já tenha sido escolhido.
+
+## 24. Infraestrutura de dados: arquitetura de referência
+
+<p align="center"><img src="assets/nyx-data-lifecycle.svg" alt="Ciclo de vida de dados proposto para a NYX" width="100%"></p>
+
+### Contratos de dados
+
+Uma futura infraestrutura de dados deverá explicitar, no mínimo:
+
+| Contrato | Perguntas que precisam de resposta |
+|---|---|
+| Schema | Quais campos, tipos, nulabilidade e restrições existem? |
+| Identidade | Como registros e entidades são identificados? |
+| Qualidade | Quais regras determinam validade e rejeição? |
+| Proveniência | De qual fonte e transformação veio cada resultado? |
+| Evolução | Como mudanças de schema serão detectadas e tratadas? |
+| Particionamento | Como os dados serão distribuídos e consultados? |
+| Ordenação | Quando a ordem é garantida e quando não é? |
+| Consistência | Quais garantias existem entre leitura e escrita? |
+| Erros | Como linhas inválidas e falhas de fonte serão representadas? |
+| Segurança | Como credenciais, permissões e dados sensíveis serão protegidos? |
+
+### Operações candidatas para NYX Data
+
+As operações abaixo representam uma taxonomia de domínio para orientar a especificação. Não são funções disponíveis na versão alfa.
+
+| Grupo | Operações candidatas |
+|---|---|
+| Ingestão | read, scan, stream, validate |
+| Seleção | select, project, filter |
+| Combinação | join, union, concat |
+| Agregação | group_by, aggregate, window |
+| Qualidade | is_null, deduplicate, assert_schema |
+| Organização | sort, partition, repartition |
+| Persistência | write, checkpoint, snapshot |
+| Proveniência | lineage, source, transformation_metadata |
+
+### Plano lógico e plano físico
+
+Uma engine analítica madura normalmente precisa distinguir a intenção declarativa da forma concreta de execução. A NYX deverá avaliar essa separação quando houver uma camada tabular real.
+
+- Plano lógico: descreve o resultado solicitado.
+- Otimizador: avalia transformações equivalentes.
+- Plano físico: escolhe algoritmos e recursos de execução.
+- Runtime: executa o plano e reporta métricas.
+- Camada de armazenamento: controla leitura, escrita e formatos.
+
+Essa arquitetura só deverá ser adotada após a definição da semântica de tabelas, tipos, nulidade e operações relacionais.
+
+## 25. Infraestrutura científica: precisão, estabilidade e reprodutibilidade
+
+Computação científica não se resume à disponibilidade de funções matemáticas. A linguagem deverá documentar o comportamento numérico, inclusive seus limites.
+
+### Precisão numérica
+
+Pontos a especificar antes de uma biblioteca científica estável:
+
+- formatos numéricos e largura de representação;
+- arredondamento e conversões;
+- overflow e underflow;
+- valores não finitos;
+- comparação com tolerância;
+- propagação de erros numéricos;
+- estabilidade de algoritmos;
+- comportamento de operações vetorizadas.
+
+### Estatística e inferência
+
+Uma biblioteca estatística futura deverá documentar hipóteses, estimadores, parâmetros, tratamento de ausências e interpretação dos resultados. A existência de uma função com nome estatístico não basta para garantir validade metodológica.
+
+### Reprodutibilidade experimental
+
+A infraestrutura poderá evoluir para registrar:
+- identificador e versão do dataset;
+- versão da linguagem e das bibliotecas;
+- parâmetros e sementes;
+- ambiente e dependências;
+- transformações aplicadas;
+- métricas de avaliação;
+- artefatos e resultados;
+- limitações e incertezas.
+
+## 26. Interoperabilidade: adaptadores e fronteiras técnicas
+
+<p align="center"><img src="assets/nyx-interoperability.svg" alt="Arquitetura conceitual de adaptadores e conectores da NYX" width="100%"></p>
+
+Interoperabilidade não deve significar acoplamento irrestrito. Cada integração deverá possuir uma fronteira explícita.
+
+### Banco de dados
+
+A integração futura com bancos deverá considerar:
+- drivers e pools de conexão;
+- parâmetros e consultas preparadas;
+- transações e isolamento;
+- mapeamento de tipos;
+- paginação e streaming;
+- cancelamento e timeout;
+- gestão de credenciais;
+- observabilidade e auditoria.
+
+### APIs e serviços
+
+A camada de serviços deverá considerar:
+- autenticação e autorização;
+- serialização e validação de payloads;
+- retry com limites;
+- timeout e circuit breaker;
+- idempotência;
+- rate limiting;
+- tratamento de indisponibilidade;
+- proteção de segredos.
+
+### Formatos de dados
+
+A avaliação de formatos deverá levar em conta:
+- leitura incremental;
+- compressão;
+- schema e evolução;
+- tipos aninhados;
+- compatibilidade entre versões;
+- metadados e particionamento;
+- custo de conversão e materialização.
+
+### Integração com outras linguagens
+
+Interfaces com Python, Rust ou C podem ser úteis para ecossistemas existentes, mas precisam respeitar ownership, ciclo de vida de memória, conversões e custos de chamada. A linguagem não deverá depender de uma única tecnologia de extensão.
+
+## 27. Observabilidade, diagnóstico e operação
+
+Uma linguagem voltada a aplicações analíticas precisa tornar o comportamento operacional inteligível. A observabilidade deverá crescer junto com o runtime, e não ser adicionada apenas quando surgirem problemas de produção.
+
+| Pilar | Aplicação futura |
+|---|---|
+| Logs | Eventos estruturados e erros contextualizados |
+| Métricas | Duração, volume, uso de memória e contadores |
+| Tracing | Relação entre etapas de execução e integrações |
+| Profiling | Identificação de gargalos |
+| Lineage | Origem e transformação de dados |
+| Diagnósticos | Arquivo, linha, coluna e contexto |
+| Auditoria | Registro de operações sensíveis |
+| Alertas | Condições operacionais e limites |
+
+### Diagnóstico atual
+
+A versão alfa já fornece localização para erros léxicos, sintáticos e de execução. Isso constitui uma base inicial, mas não deve ser confundido com tracing distribuído, profiling ou observabilidade de pipelines.
+
+## 28. Segurança e cadeia de suprimentos
+
+A segurança deverá ser tratada como requisito de arquitetura, especialmente quando a linguagem evoluir para conectores, execução de código externo e integração com modelos.
+
+Princípios de projeto:
+
+1. Não armazenar credenciais em código ou repositório.
+2. Validar entradas externas e limites de recursos.
+3. Isolar dependências opcionais.
+4. Fixar e revisar versões de dependências em ambientes de release.
+5. Registrar a origem dos artefatos distribuídos.
+6. Evitar execução implícita de código externo.
+7. Definir permissões mínimas para conectores.
+8. Tratar logs como dados potencialmente sensíveis.
+9. Documentar riscos de execução e de desserialização.
+10. Incluir revisão de segurança em mudanças de runtime.
+
+Esses princípios são diretrizes futuras; não constituem uma certificação de segurança do protótipo atual.
+
+## 29. Estratégia de desempenho e benchmarking
+
+A NYX não fará alegações de desempenho sem evidência reproduzível. O benchmark deverá comparar tarefas equivalentes, com entradas, ambiente e critérios publicados.
+
+### Dimensões de medição
+
+| Dimensão | O que medir |
+|---|---|
+| Latência | Tempo por execução |
+| Throughput | Operações ou registros por unidade de tempo |
+| Memória | Pico e perfil de alocação |
+| Escalabilidade | Comportamento com aumento de volume |
+| Inicialização | Tempo até a primeira execução |
+| Interoperabilidade | Custo de conversão e transferência |
+| Concorrência | Ganho real e contenção |
+| Correção | Equivalência dos resultados |
+
+### Protocolo de benchmark proposto
+
+- definir workload e dataset;
+- documentar hardware e sistema operacional;
+- registrar versões e parâmetros;
+- executar aquecimento quando aplicável;
+- realizar múltiplas repetições;
+- reportar mediana e dispersão;
+- separar tempo de inicialização e execução;
+- publicar código e instruções;
+- validar equivalência dos resultados.
+
+Não há números de benchmark publicados neste README. O protocolo acima é uma proposta metodológica para futuras comparações.
+
+## 30. Matriz de maturidade e evolução
+
+<p align="center"><img src="assets/nyx-roadmap-matrix.svg" alt="Matriz visual de evolução e maturidade da NYX" width="100%"></p>
+
+| Frente | Estado atual | Próximo marco técnico |
+|---|---|---|
+| Frontend | Implementado | Ampliar conformidade e diagnósticos |
+| Runtime tree-walk | Implementado | Formalizar semântica e limites |
+| Sistema de tipos | Em especificação | Definir regras e testes normativos |
+| Módulos | Planejado | Definir resolução e visibilidade |
+| Science | Planejado | Especificar operações numéricas |
+| Data | Planejado | Definir schema e semântica tabular |
+| IR | Planejado | Definir representação e invariantes |
+| Otimização | Planejado | Benchmarks e equivalência |
+| Paralelismo | Planejado | Modelo de concorrência |
+| AI | Planejado | Interfaces independentes de provedor |
+| Connect | Planejado | Contratos e adaptadores |
+
+### Critério de maturidade
+
+A evolução não será medida por quantidade de nomes de módulos ou por diagramas. Será medida por capacidades implementadas, contratos definidos, testes, documentação, compatibilidade e uso verificável.
+
+---
+
+## Apêndice A — Glossário técnico
+
+| Termo | Definição no contexto do projeto |
+|---|---|
+| AST | Árvore sintática abstrata que representa a estrutura do programa |
+| Lexer | Componente que converte caracteres em tokens |
+| Parser | Componente que reconhece a gramática |
+| Runtime | Infraestrutura responsável pela execução |
+| Tree-walk | Estratégia de avaliação que percorre a AST |
+| IR | Representação intermediária entre frontend e backend |
+| Backend | Componente que executa ou traduz uma representação |
+| Data lineage | Rastreabilidade da origem e das transformações dos dados |
+| Schema | Estrutura e contrato dos dados |
+| Lazy evaluation | Avaliação adiada até a necessidade do resultado |
+| Eager evaluation | Avaliação imediata da operação |
+| FFI | Interface para interoperar com código de outra linguagem |
+| ABI | Contrato binário entre componentes compilados |
+| Throughput | Quantidade de trabalho processada por unidade de tempo |
+| Profiling | Análise do custo e comportamento da execução |
+| Reprodutibilidade | Capacidade de repetir um procedimento sob condições registradas |
+
+## Apêndice B — Documentos normativos e de apoio
+
+- [Especificação 0.6](docs/ESPECIFICACAO_INICIAL.md): comportamento documentado do núcleo alfa.
+- [Especificação formal em elaboração](docs/ESPECIFICACAO_LINGUAGEM.md): gramática e decisões semânticas preliminares.
+- [Arquitetura](docs/ARQUITETURA.md): responsabilidades e evolução dos componentes.
+- [Roadmap](docs/ROADMAP.md): fases e critérios de conclusão.
+- [Exemplos científicos](docs/EXEMPLOS_CIENTIFICOS.md): propostas de sintaxe e domínios.
+
+---
+
+<div align="center">
+
+<img src="assets/nyx-mark.svg" alt="Símbolo NYX" width="76">
+
+### NYX · NR TECH
+
+**Think Scientifically. Compute Intelligently.**
+
+Linguagem independente. Ciência aplicada. Engenharia orientada por evidências.
+
+</div>

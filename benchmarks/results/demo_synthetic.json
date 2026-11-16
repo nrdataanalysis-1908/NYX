@@ -1,0 +1,67 @@
+{
+  "classification": "SYNTHETIC_DEMONSTRATION_NOT_MEASURED",
+  "warning": "Valores fictícios para demonstrar o formato dos relatórios. Não são medições do runtime NYX e não devem ser citados como desempenho real.",
+  "generated_at_utc": "DEMO_DATA_NO_MEASUREMENT_TIMESTAMP",
+  "results": [
+    {
+      "runtime": "NYX end-to-end",
+      "workload": "arithmetic_loop",
+      "operations": 300,
+      "median_ms": 4.82,
+      "p95_ms": 5.21,
+      "stdev_ms": 0.31,
+      "throughput_ops_s": 62240,
+      "peak_memory_kib": 15.8
+    },
+    {
+      "runtime": "NYX cached AST",
+      "workload": "arithmetic_loop",
+      "operations": 300,
+      "median_ms": 2.71,
+      "p95_ms": 2.94,
+      "stdev_ms": 0.16,
+      "throughput_ops_s": 110701,
+      "peak_memory_kib": 8.4
+    },
+    {
+      "runtime": "Python reference",
+      "workload": "arithmetic_loop",
+      "operations": 300,
+      "median_ms": 0.09,
+      "p95_ms": 0.12,
+      "stdev_ms": 0.01,
+      "throughput_ops_s": 3333333,
+      "peak_memory_kib": 2.1
+    },
+    {
+      "runtime": "NYX end-to-end",
+      "workload": "list_append",
+      "operations": 150,
+      "median_ms": 2.65,
+      "p95_ms": 2.91,
+      "stdev_ms": 0.19,
+      "throughput_ops_s": 56604,
+      "peak_memory_kib": 12.6
+    },
+    {
+      "runtime": "NYX cached AST",
+      "workload": "list_append",
+      "operations": 150,
+      "median_ms": 1.44,
+      "p95_ms": 1.62,
+      "stdev_ms": 0.11,
+      "throughput_ops_s": 104167,
+      "peak_memory_kib": 7.2
+    },
+    {
+      "runtime": "Python reference",
+      "workload": "list_append",
+      "operations": 150,
+      "median_ms": 0.06,
+      "p95_ms": 0.08,
+      "stdev_ms": 0.01,
+      "throughput_ops_s": 2500000,
+      "peak_memory_kib": 1.8
+    }
+  ]
+}

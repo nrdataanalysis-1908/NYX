@@ -44,6 +44,8 @@ O exemplo abaixo usa exclusivamente construções presentes no núcleo atual: fu
 
 ### Estatística descritiva — média aritmética
 
+<img src="assets/code/mean.svg" alt="Código NYX com destaque de sintaxe em azul, ciano e azul elétrico" width="100%">
+
 ```nyx
 fn mean(values) {
     let total = 0
@@ -72,6 +74,8 @@ A média aritmética das cinco observações é calculada pela soma dos valores 
 
 ### Recursão e composição de funções
 
+<img src="assets/code/functions.svg" alt="Código NYX de recursão e composição de funções com sintaxe colorida" width="100%">
+
 ```nyx
 fn factorial(n) {
     if (n <= 1) {
@@ -93,6 +97,8 @@ print(normalized)
 ```
 
 ### Estruturas e mutabilidade
+
+<img src="assets/code/collections.svg" alt="Código NYX de listas e indexação com sintaxe colorida" width="100%">
 
 ```nyx
 let measurements = [18.2, 19.4, 20.1]

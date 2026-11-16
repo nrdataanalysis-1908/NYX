@@ -10,10 +10,10 @@ Uma linguagem independente em construção, com sintaxe, semântica e arquitetur
 
 **Think Scientifically. Compute Intelligently.**
 
-![Status](https://img.shields.io/badge/STATUS-ALPHA-60E6FF?style=for-the-badge&labelColor=07111F)
-![Especificação](https://img.shields.io/badge/SPECIFICATION-0.6-397BFF?style=for-the-badge&labelColor=07111F)
-![Python](https://img.shields.io/badge/HOST_RUNTIME-Python%203.10%2B-60E6FF?style=for-the-badge&logo=python&logoColor=white&labelColor=07111F)
-![Licença](https://img.shields.io/badge/LICENÇA-Apache%202.0-60E6FF?style=for-the-badge&labelColor=07111F)
+![Status](https://img.shields.io/badge/STATUS-ALPHA-00D9FF?style=for-the-badge&labelColor=050B18)
+![Especificação](https://img.shields.io/badge/SPECIFICATION-0.6-168BFF?style=for-the-badge&labelColor=050B18)
+![Python](https://img.shields.io/badge/HOST_RUNTIME-Python%203.10%2B-00D9FF?style=for-the-badge&logo=python&logoColor=white&labelColor=050B18)
+![Licença](https://img.shields.io/badge/LICENSE-Apache%202.0-397BFF?style=for-the-badge&labelColor=050B18)
 
 [Documentação](docs/ESPECIFICACAO_INICIAL.md) · [Arquitetura](docs/ARQUITETURA.md) · [Roadmap](docs/ROADMAP.md) · [Releases](https://github.com/nrdataanalysis-1908/NYX-CODE/releases)
 
@@ -43,6 +43,18 @@ A NYX não pretende ser apenas uma camada sintática sobre Python. Python hosped
 | **N** | **Numerical** | Fundamento matemático, numérico e computacional |
 | **Y** | **Yield** | Produção de resultados, conhecimento e valor verificável |
 | **X** | **eXchange** | Interoperabilidade entre linguagens, dados, serviços e infraestruturas |
+
+### Paleta cromática oficial — NYX Neon
+
+| Amostra | Cor | Código | Aplicação |
+|---|---|---|---|
+| <img src="https://img.shields.io/badge/-%20-050B18?style=flat-square" alt="Amostra azul-marinho"> | Azul-marinho | `#050B18` | Fundo principal |
+| <img src="https://img.shields.io/badge/-%20-0B1B31?style=flat-square" alt="Amostra azul profundo"> | Azul profundo | `#0B1B31` | Painéis e cartões |
+| <img src="https://img.shields.io/badge/-%20-168BFF?style=flat-square" alt="Amostra azul elétrico"> | Azul elétrico | `#168BFF` | Linhas, conexões e destaques |
+| <img src="https://img.shields.io/badge/-%20-397BFF?style=flat-square" alt="Amostra azul intenso"> | Azul intenso | `#397BFF` | Elementos secundários |
+| <img src="https://img.shields.io/badge/-%20-00D9FF?style=flat-square" alt="Amostra ciano neon"> | Ciano neon | `#00D9FF` | Marca, títulos e ênfase |
+| <img src="https://img.shields.io/badge/-%20-60E6FF?style=flat-square" alt="Amostra ciano claro"> | Ciano claro | `#60E6FF` | Contraste e detalhes |
+| <img src="https://img.shields.io/badge/-%20-F2FAFF?style=flat-square" alt="Amostra branco frio"> | Branco frio | `#F2FAFF` | Texto principal |
 
 ### Diretrizes fundamentais
 

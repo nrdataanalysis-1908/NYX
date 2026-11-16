@@ -114,6 +114,9 @@ print(measurements[1])
 
 Esses exemplos são programas executáveis no protótipo atual. Eles não dependem de APIs científicas ainda inexistentes.
 
+
+<img src="assets/diagrams/ecosystem.svg" alt="Diagrama do ecossistema NYX e seus domínios especializados" width="100%">
+
 ## 03. Da linguagem ao ecossistema científico
 
 A evolução da NYX está organizada em domínios especializados. A separação permite que a linguagem mantenha um núcleo coerente enquanto bibliotecas e engines evoluem com contratos próprios.
@@ -158,6 +161,7 @@ summary.show()
 ```
 
 O desenho dessa API exige decisões formais sobre schema, nulidade, tipos de coluna, resolução de nomes, avaliação lazy/eager, ordenação e reprodutibilidade numérica. Os exemplos conceituais estão documentados em [EXEMPLOS_CIENTIFICOS.md](docs/EXEMPLOS_CIENTIFICOS.md).
+
 
 ## 04. Desempenho e benchmarking
 
@@ -271,6 +275,9 @@ O workflow automatizado está disponível em [Actions → NYX reproducible bench
 
 Os workloads atuais são microbenchmarks do protótipo, não uma avaliação ampla de performance. Ainda não medem vetorização, operações matriciais, leitura de grandes datasets, joins, execução distribuída, GPU, concorrência ou escalabilidade. Não se deve extrapolar os resultados para esses cenários.
 
+
+<img src="assets/diagrams/runtime-roadmap.svg" alt="Evolução do modelo de execução da NYX, do interpretador atual a possíveis backends futuros" width="100%">
+
 ## 05. Arquitetura de execução
 
 ### Pipeline atualmente implementado
@@ -293,6 +300,9 @@ A sequência acima representa o caminho efetivamente implementado no protótipo.
 ### Evolução arquitetural em investigação
 
 A separação entre frontend, análise semântica, representação intermediária e backend será considerada conforme a maturidade da linguagem e os resultados dos experimentos. IR, VM, compilação nativa e otimizador ainda não estão implementados.
+
+
+<img src="assets/diagrams/experimental-cycle.svg" alt="Ciclo experimental de hipótese, workload, medição, análise, revisão e reprodução" width="100%">
 
 ## 06. Pesquisa, validação e qualidade
 
@@ -321,6 +331,9 @@ A evolução científica da NYX requer critérios verificáveis além de testes 
 - escalabilidade por tamanho de entrada.
 
 Essas famílias são propostas para etapas futuras. Os resultados somente serão publicados quando houver implementação funcional e protocolo de medição correspondente.
+
+
+<img src="assets/diagrams/data-lifecycle.svg" alt="Ciclo conceitual de ingestão, validação, transformação, análise e publicação de dados" width="100%">
 
 ## 07. Instalação e execução
 
@@ -430,6 +443,9 @@ NYX-CODE/
 # Caderno técnico de pesquisa
 
 As seções seguintes aprofundam as decisões de arquitetura, o desenho experimental e os domínios científicos que orientam a evolução da NYX. O objetivo é documentar não apenas o que existe no protótipo, mas também os critérios pelos quais novos recursos deverão ser especificados, implementados, testados e avaliados.
+
+
+<img src="assets/diagrams/maturity-map.svg" alt="Matriz visual dos quatro estados de maturidade dos recursos da NYX" width="100%">
 
 ## 12. Modelo de maturidade dos recursos
 

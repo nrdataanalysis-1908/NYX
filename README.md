@@ -602,3 +602,321 @@ A evolução não será medida por quantidade de nomes de módulos ou por diagra
 Linguagem independente. Ciência aplicada. Engenharia orientada por evidências.
 
 </div>
+
+
+
+## 31. Projeto do frontend: análise lexical, sintática e estrutural
+
+O frontend é a porta de entrada da linguagem. Sua responsabilidade é converter texto em uma representação estruturada, mantendo diagnósticos úteis e comportamento determinístico.
+
+### Análise lexical
+
+A análise lexical identifica unidades como:
+- identificadores;
+- palavras reservadas;
+- números inteiros e de ponto flutuante;
+- strings e escapes;
+- operadores;
+- delimitadores;
+- comentários;
+- separadores de instrução.
+
+A posição dos tokens é relevante para mensagens de erro e ferramentas futuras. A evolução do lexer deverá manter testes para caracteres inválidos, UTF-8, BOM, strings, comentários e continuidade de expressões entre linhas.
+
+### Análise sintática
+
+O parser recursivo descendente atual reconhece as construções existentes. O crescimento da gramática exigirá atenção a:
+- precedência e associatividade;
+- recuperação após erro;
+- ambiguidade entre expressões e instruções;
+- regras de quebra de linha;
+- blocos e escopos;
+- chamadas e indexação;
+- compatibilidade de versões da gramática.
+
+### AST e evolução estrutural
+
+A AST deverá continuar independente da representação textual. Cada nó deve possuir finalidade definida, e alterações estruturais precisam ser acompanhadas por testes que verifiquem tanto a construção quanto a avaliação.
+
+### Testes de conformidade da linguagem
+
+A especificação deverá fornecer casos normativos. Cada construção terá:
+1. exemplo válido mínimo;
+2. exemplo válido composto;
+3. exemplo inválido;
+4. comportamento esperado;
+5. categoria de diagnóstico;
+6. regra de compatibilidade.
+
+## 32. Semântica: decisões que não podem ficar implícitas
+
+Uma linguagem torna-se previsível quando seus comportamentos são especificados, não quando dependem de detalhes incidentais da implementação.
+
+| Tema | Questão semântica | Necessidade |
+|---|---|---|
+| Escopo | Léxico, dinâmico ou híbrido? | Resolução previsível de nomes |
+| Mutabilidade | Vinculação ou objeto pode mudar? | Controle de estado |
+| Funções | Como parâmetros e retornos são avaliados? | Composição |
+| Igualdade | Estrutural, identidade ou ambas? | Comparação consistente |
+| Nulidade | Como ausência é propagada? | Segurança de dados |
+| Erros | Exceções, Result ou ambos? | Fluxo de falhas |
+| Conversões | Quais conversões são implícitas? | Precisão e previsibilidade |
+| Avaliação | Eager, lazy ou híbrida? | Custo e semântica |
+| Ordem | Quais operações preservam ordem? | Reprodutibilidade |
+| Concorrência | Como estado compartilhado é controlado? | Correção paralela |
+
+### Compatibilidade semântica
+
+Mudanças de parser, runtime ou backend não deverão modificar silenciosamente o resultado de programas válidos. Quando uma mudança incompatível for inevitável, deverá ser registrada, justificada e acompanhada de orientação de migração.
+
+## 33. Estratégia de tipos e valores
+
+O modelo de tipos precisa servir tanto ao núcleo da linguagem quanto aos domínios científicos e tabulares.
+
+### Requisitos do modelo
+
+- distinguir valor e tipo;
+- definir igualdade e compatibilidade;
+- documentar conversões;
+- especificar mutabilidade;
+- definir comportamento de valores ausentes;
+- permitir tipos compostos;
+- prever validação estática quando houver sistema de tipos;
+- evitar conversões silenciosas com perda de informação.
+
+### Tipos numéricos e computação científica
+
+A futura especificação numérica deverá distinguir precisão, faixa representável e semântica de operações. Tipos inteiros e de ponto flutuante não devem ser tratados como intercambiáveis sem regras explícitas.
+
+### Tipos de dados tabulares
+
+Uma estrutura tabular futura precisará representar schema, tipos de coluna, nulidade, metadados e operações relacionais. A semântica de uma coluna não deve ser inferida apenas pelo primeiro valor observado sem política documentada.
+
+## 34. Bibliotecas e modularidade
+
+A biblioteca padrão deverá ser organizada por domínios e manter dependências explícitas.
+
+### Organização conceitual
+
+| Biblioteca | Escopo | Dependências esperadas |
+|---|---|---|
+| Core | Texto, coleções, erros, módulos e I/O | Runtime |
+| Math | Operações matemáticas | Core e tipos numéricos |
+| Statistics | Estatística descritiva e inferencial | Math e estruturas numéricas |
+| Linear Algebra | Vetores, matrizes e decomposições | Runtime numérico |
+| Data | Estruturas tabulares e transformações | Core e conectores |
+| IO | Arquivos e serialização | Core e adaptadores |
+| ML / AI | Treinamento e inferência | Data, Math e provedores |
+| Connect | Bancos, APIs e serviços | Interfaces de integração |
+
+Essa divisão é uma proposta de organização. Nenhuma dessas bibliotecas deve ser presumida como pacote já publicado.
+
+### Critérios para uma biblioteca oficial
+
+- API documentada;
+- semântica consistente;
+- testes de unidade e integração;
+- política de compatibilidade;
+- dependências justificadas;
+- exemplos reproduzíveis;
+- documentação de limitações;
+- política de versionamento.
+
+## 35. Gestão de dependências e distribuição
+
+O empacotamento atual utiliza setuptools e wheel, com configuração em pyproject.toml. O pacote publicado no PyPI é uma prévia alfa do protótipo.
+
+A evolução da distribuição deverá considerar:
+- separação entre ferramenta de desenvolvimento e runtime;
+- instalação reproduzível;
+- dependências opcionais por domínio;
+- compatibilidade entre versões;
+- metadados de pacote;
+- assinatura e proveniência de artefatos;
+- processo de release documentado;
+- política de suporte a plataformas.
+
+### Distribuição futura da linguagem
+
+A eventual transição para runtime nativo exigirá decidir como serão distribuídos:
+- compilador ou interpretador;
+- bibliotecas padrão;
+- ferramentas de linha de comando;
+- gerenciador de pacotes;
+- documentação offline;
+- ferramentas de depuração;
+- integração com editores.
+
+Essas decisões ainda não estão concluídas.
+
+## 36. Experiência de desenvolvimento e ferramentas
+
+Uma linguagem útil precisa de ferramentas que tornem o ciclo de desenvolvimento eficiente e previsível.
+
+| Ferramenta | Objetivo futuro |
+|---|---|
+| CLI | Executar, validar e inspecionar programas |
+| Formatter | Padronizar estilo de código |
+| Linter | Detectar problemas estáticos |
+| Language Server | Autocomplete, diagnósticos e navegação |
+| Debugger | Breakpoints, inspeção e stepping |
+| REPL | Experimentação interativa |
+| Package manager | Dependências e ambientes |
+| Profiler | Identificar gargalos |
+| Test runner | Descoberta e execução de testes |
+| Documentation generator | Gerar referência da linguagem e APIs |
+
+A CLI existente é a ferramenta disponível hoje. As demais são possibilidades de evolução e não devem ser anunciadas como prontas.
+
+## 37. Arquitetura de execução de dados: plano conceitual
+
+Uma futura engine de dados poderá exigir um ciclo próprio de planejamento e execução. Esse ciclo deverá ser subordinado à semântica da linguagem e não substituir o runtime geral.
+
+```mermaid
+flowchart TD
+    A["Expressão de dados"] --> B["Validação de schema"]
+    B --> C["Plano lógico"]
+    C --> D["Regras de otimização"]
+    D --> E["Plano físico"]
+    E --> F["Seleção de operadores"]
+    F --> G["Execução"]
+    G --> H["Resultado + métricas + lineage"]
+```
+
+### Operadores candidatos
+
+| Operador | Papel |
+|---|---|
+| Scan | Ler uma fonte |
+| Filter | Reduzir registros por predicado |
+| Project | Selecionar ou derivar campos |
+| Join | Combinar relações |
+| Aggregate | Calcular medidas por grupo |
+| Sort | Ordenar resultados |
+| Window | Calcular medidas sobre janelas |
+| Sink | Persistir ou disponibilizar resultados |
+
+### Otimizações que exigem evidência
+
+- predicate pushdown;
+- projection pruning;
+- join reordering;
+- partition pruning;
+- vectorized execution;
+- cache controlado;
+- execução incremental;
+- paralelismo por partição.
+
+Cada otimização precisará preservar resultados e ser acompanhada por testes de equivalência. Não há otimizador de consultas implementado na versão alfa.
+
+## 38. Modelo de qualidade para dados
+
+A qualidade deverá ser tratada como propriedade verificável, não como uma etapa informal de limpeza.
+
+### Dimensões de qualidade
+
+| Dimensão | Pergunta de validação |
+|---|---|
+| Completude | Os campos obrigatórios estão presentes? |
+| Validade | Os valores respeitam domínio e formato? |
+| Unicidade | Há duplicidades proibidas? |
+| Consistência | Campos relacionados são coerentes? |
+| Atualidade | Os dados estão dentro da janela temporal esperada? |
+| Integridade | As relações e chaves são válidas? |
+| Precisão | O valor representa adequadamente a realidade observada? |
+| Rastreabilidade | A origem e as transformações podem ser identificadas? |
+
+### Contratos de qualidade futuros
+
+Uma futura API de qualidade poderá permitir declarar regras, registrar violações, separar dados aceitos e rejeitados e acompanhar tendências. A sintaxe e o modelo de execução dessas regras ainda precisam ser especificados.
+
+## 39. Governança de dados e experimentos
+
+A ambição científica e analítica exige governança proporcional ao uso.
+
+### Governança de dados
+
+- catálogo e descrição de datasets;
+- classificação de dados;
+- controle de acesso;
+- proveniência e lineage;
+- retenção e descarte;
+- versionamento;
+- auditoria;
+- documentação de qualidade.
+
+### Governança de experimentos
+
+- hipótese e objetivo;
+- desenho experimental;
+- população e amostragem;
+- parâmetros;
+- sementes;
+- métricas;
+- incerteza;
+- resultados negativos;
+- limitações metodológicas.
+
+A NYX deverá oferecer meios para integrar essas práticas, mas não há atualmente um catálogo, registro de experimentos ou serviço de governança implementado.
+
+## 40. Estratégia de compatibilidade e releases
+
+A evolução de uma linguagem pode quebrar programas, ferramentas e pacotes. Por isso, a política de versões deverá diferenciar claramente:
+
+- versão do pacote;
+- versão da linguagem;
+- versão da especificação;
+- versão do runtime;
+- versão das bibliotecas;
+- formato de artefatos compilados, caso venham a existir.
+
+### Elementos de uma release madura
+
+1. changelog;
+2. notas de compatibilidade;
+3. testes automatizados;
+4. artefatos reproduzíveis;
+5. documentação atualizada;
+6. instruções de instalação;
+7. assinatura ou proveniência quando aplicável;
+8. política de suporte e correção.
+
+## 41. Perguntas arquiteturais em aberto
+
+O projeto deverá tratar explicitamente as seguintes decisões antes de consolidar a plataforma:
+
+1. Qual será o modelo definitivo de tipagem?
+2. Como será a semântica de nulidade?
+3. Qual será a estratégia de módulos e pacotes?
+4. Como a IR representará controle de fluxo e dados?
+5. Qual backend de execução será priorizado?
+6. Como será administrada a memória?
+7. Como as bibliotecas científicas serão implementadas?
+8. Qual será a semântica de DataFrame e Dataset?
+9. Como a execução lazy será representada?
+10. Como serão definidos contratos de conectores?
+11. Qual modelo de concorrência será adotado?
+12. Como serão garantidas reprodutibilidade e compatibilidade?
+
+A documentação dessas decisões deve evoluir com propostas técnicas e evidências, sem antecipar respostas que ainda não foram aprovadas.
+
+## 42. Resumo técnico
+
+| Eixo | Base atual | Horizonte |
+|---|---|---|
+| Linguagem | Lexer, parser, AST e interpretador | Semântica formal e sistema de tipos |
+| Execução | Tree-walk | IR, VM ou backend nativo |
+| Dados | Listas e operações básicas | Engine tabular e pipelines |
+| Ciência | Tipos escalares | Bibliotecas numéricas e estatísticas |
+| Integração | Sem conectores nativos | SQL, APIs e formatos |
+| IA | Sem módulos próprios | Interfaces desacopladas |
+| Infraestrutura | Python, pytest e GitHub Actions | Runtime independente e ferramentas |
+| Qualidade | Testes de linguagem | Conformidade, benchmarks e observabilidade |
+
+---
+
+<div align="center">
+
+**NYX não será definida pela quantidade de recursos prometidos, mas pela consistência dos recursos que conseguir implementar.**
+
+</div>

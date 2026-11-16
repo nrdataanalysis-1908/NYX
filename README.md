@@ -187,7 +187,7 @@ O primeiro diagrama representa a implementação atual. O segundo expressa uma d
 ### Obter o código-fonte
 
 ```powershell
-git clone https://github.com/nrdataanalysis-1908/NYX-CODE.git
+git clone --branch nrdataanalysis-1908-patch-1 https://github.com/nrdataanalysis-1908/NYX-CODE.git
 cd NYX-CODE
 
 python -m venv .venv

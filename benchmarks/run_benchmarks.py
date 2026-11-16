@@ -19,6 +19,8 @@ from pathlib import Path
 
 from nyx import Interpreter, Lexer, Parser, run
 
+# Keep workloads deterministic and small enough for repeatable CI measurements.
+# Add scientific kernels only when the corresponding NYX features are executable.
 WORKLOADS = {
     "arithmetic_loop": {
         "operations": 300,

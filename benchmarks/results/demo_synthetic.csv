@@ -1,0 +1,7 @@
+runtime,workload,operations,median_ms,p95_ms,stdev_ms,throughput_ops_s,peak_memory_kib
+NYX end-to-end,arithmetic_loop,300,4.82,5.21,0.31,62240,15.8
+NYX cached AST,arithmetic_loop,300,2.71,2.94,0.16,110701,8.4
+Python reference,arithmetic_loop,300,0.09,0.12,0.01,3333333,2.1
+NYX end-to-end,list_append,150,2.65,2.91,0.19,56604,12.6
+NYX cached AST,list_append,150,1.44,1.62,0.11,104167,7.2
+Python reference,list_append,150,0.06,0.08,0.01,2500000,1.8

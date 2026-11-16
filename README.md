@@ -1,68 +1,106 @@
-# NYX
+# NYX — Numerical Yield eXchange
 
-**Numerical Yield eXchange**
+**Linguagem de programação científica orientada a dados**
 
-Linguagem de programação independente, concebida para ciência de dados, computação científica e inteligência artificial.
+*Think Scientifically. Compute Intelligently.*
 
-A NYX é um projeto da **NR TECH** que busca unificar operações científicas e orientadas a dados em uma linguagem coesa, com sintaxe própria, semântica explícita e execução progressivamente otimizada.
+NYX é um projeto autoral da NR TECH para desenvolver uma linguagem independente voltada à computação científica, à engenharia de dados e à integração de inteligência artificial.
 
-> Think Scientifically. Compute Intelligently.
+> **Estado atual:** protótipo executável 0.1.0a1. O núcleo inicial já possui lexer, parser de descida recursiva, AST própria, interpretador e interface de linha de comando. A linguagem ainda está em estágio alfa e não oferece, nesta versão, estruturas tabulares, bibliotecas científicas, compilação nativa, IR ou recursos de IA.
 
-## Objetivos
+## Identidade e propósito
 
-- Oferecer uma linguagem legível para análise de dados e computação científica.
-- Integrar matemática, estatística, processamento de dados e inteligência artificial.
-- Reduzir a fragmentação entre ferramentas e etapas de fluxos científicos.
-- Priorizar precisão, reprodutibilidade, rastreabilidade e desempenho mensurável.
-- Executar localmente, sem exigir um serviço remoto para o funcionamento do núcleo.
+- **N — Numerical:** fundamento matemático e computacional.
+- **Y — Yield:** produção de resultados e conhecimento.
+- **X — eXchange:** integração e interoperabilidade.
 
-## Princípios de engenharia
+A NYX possui sintaxe, gramática, frontend, AST e regras de avaliação próprias. Python é utilizado como linguagem hospedeira do protótipo, não como gramática ou mecanismo semântico delegado.
 
-1. **Independência:** gramática, parser, sistema de tipos, representação intermediária e runtime próprios.
-2. **Determinismo:** operações fundamentais devem produzir resultados reproduzíveis, sem depender de modelos de IA.
-3. **Interoperabilidade:** integração com bancos de dados, APIs e ecossistemas externos por adaptadores.
-4. **Evolução incremental:** cada etapa deve ser funcional, testada e documentada.
-5. **Transparência:** decisões de execução, conversões e otimizações devem ser inspecionáveis.
+## Núcleo implementado
 
-## Escopo tecnológico
+- Lexer com localização de tokens.
+- Parser recursivo e AST própria.
+- Literais: Integer, Float, String, Boolean e Null.
+- Declaração de variáveis com `let`.
+- Expressões aritméticas, relacionais e lógicas.
+- Precedência de operadores e agrupamento.
+- Saída com `print(...)`.
+- Diagnósticos léxicos, sintáticos e de execução com linha e coluna.
+- CLI para executar arquivos `.nyx`.
 
-A evolução da linguagem está organizada em três eixos:
+## Exemplo executável
 
-- **NYX Science:** matemática, estatística, vetores, matrizes, tensores e simulação.
-- **NYX Data:** leitura, transformação, consulta e análise de conjuntos de dados.
-- **NYX AI:** integração de recursos de inteligência artificial e aprendizado de máquina.
+```nyx
+let samples = 120;
+let ratio = 0.875;
+let title = "NYX — Numerical Yield eXchange";
 
-Esses eixos serão implementados gradualmente sobre uma arquitetura comum.
+print(title);
+print(samples * ratio);
+print(samples >= 100 and ratio < 1.0);
+```
 
-## Documentação
+Consulte [examples/00_primeiro_programa.nyx](examples/00_primeiro_programa.nyx).
 
-| Documento | Descrição |
-|---|---|
-| [Especificação da linguagem](docs/ESPECIFICACAO_LINGUAGEM.md) | Primeira proposta de sintaxe, palavras reservadas, tipos e gramática EBNF |
-| [Arquitetura](docs/ARQUITETURA.md) | Componentes e pipeline de execução |
-| [Roadmap](docs/ROADMAP.md) | Fases de desenvolvimento e critérios de conclusão |
+## Instalação para desenvolvimento
 
-A especificação da linguagem está em estado de rascunho (versão 0.1.0-draft). Suas construções são propostas de projeto e ainda não devem ser tratadas como recursos executáveis.
+Requisitos: Python 3.10 ou superior.
 
-## Arquitetura planejada
+```bash
+git clone https://github.com/nrdataanalysis-1908/NYX.git
+cd NYX
+python -m venv .venv
+```
 
-- Frontend: análise léxica, sintática e semântica.
-- Sistema de tipos: tipos fundamentais, estruturas científicas e inferência controlada.
-- AST e IR: representação estruturada e intermediária próprias.
-- Engine: planejamento e otimização determinística.
-- Runtime: execução, memória, erros e observabilidade.
-- Biblioteca padrão: operações matemáticas, estatísticas e de dados.
+Ative o ambiente virtual e instale as dependências de desenvolvimento:
 
-## Estado do projeto
+```bash
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
 
-O projeto encontra-se na fase de especificação e construção da fundação da linguagem. Os exemplos e componentes descritos nesta documentação representam objetivos de projeto, não funcionalidades já implementadas.
+# Linux/macOS
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+```
+
+Execute um programa:
+
+```bash
+nyx run examples/00_primeiro_programa.nyx
+```
+
+Ou, durante o desenvolvimento:
+
+```bash
+python -m nyx run examples/00_primeiro_programa.nyx
+```
+
+Execute os testes:
+
+```bash
+python -m pytest -q
+```
+
+## Especificação e arquitetura
+
+- [Especificação inicial da linguagem](docs/ESPECIFICACAO_INICIAL.md)
+- [Arquitetura](docs/ARQUITETURA.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Exemplos científicos conceituais](docs/EXEMPLOS_CIENTIFICOS.md)
+
+Os exemplos científicos anteriores continuam sendo propostas de sintaxe e domínio; apenas o exemplo `00_primeiro_programa.nyx` corresponde ao subconjunto executável do protótipo atual.
+
+## Próximas etapas
+
+1. Ampliar a cobertura de testes e consolidar diagnósticos.
+2. Introduzir blocos, controle de fluxo e funções.
+3. Formalizar análise semântica e sistema de tipos.
+4. Desenvolver coleções e operações matemáticas.
+5. Criar estruturas tabulares e operações de dados.
+6. Projetar IR, otimização e paralelismo com benchmarks reproduzíveis.
+7. Integrar recursos de IA por interfaces desacopladas.
 
 ## Licença
 
-Distribuído sob a licença Apache 2.0. Consulte o arquivo [LICENSE](LICENSE).
-
-## Organização
-
-Desenvolvido pela **NR TECH**.
-
-- Repositório: https://github.com/nrdataanalysis-1908/NYX
+Apache License 2.0. Consulte [LICENSE](LICENSE).

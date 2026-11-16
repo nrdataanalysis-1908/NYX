@@ -1,6 +1,11 @@
 name: NYX reproducible benchmarks
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "benchmarks/run_benchmarks.py"
+      - ".github/workflows/benchmarks.yml"
   workflow_dispatch:
     inputs:
       repetitions:

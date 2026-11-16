@@ -19,6 +19,21 @@ Uma linguagem independente em construção, com sintaxe, semântica e arquitetur
 
 </div>
 
+### Navegação complementar — arquitetura aprofundada
+
+- [12. Visão sistêmica](#12-visão-sistêmica-da-linguagem-ao-produto-de-dados)
+- [13. Modelo de execução](#13-modelo-de-execução-presente-e-evolução)
+- [14. Infraestrutura de dados](#14-infraestrutura-de-dados-arquitetura-de-referência)
+- [15. Infraestrutura científica](#15-infraestrutura-científica-precisão-estabilidade-e-reprodutibilidade)
+- [16. Interoperabilidade](#16-interoperabilidade-adaptadores-e-fronteiras-técnicas)
+- [17. Observabilidade](#17-observabilidade-diagnóstico-e-operação)
+- [18. Segurança](#18-segurança-e-cadeia-de-suprimentos)
+- [19. Benchmarking](#19-estratégia-de-desempenho-e-benchmarking)
+- [20. Maturidade](#20-matriz-de-maturidade-e-evolução)
+- [21. Frontend e gramática](#21-projeto-do-frontend-análise-lexical-sintática-e-estrutural)
+- [22–32. Semântica, tipos, bibliotecas, ferramentas e governança](#22-semântica-decisões-que-não-podem-ficar-implícitas)
+
+
 <p align="center">
   <img src="assets/nyx-workbench.svg" alt="NYX LAB — ambiente conceitual de programação científica" width="100%">
 </p>
@@ -288,35 +303,11 @@ Distribuído sob a licença Apache License 2.0. Consulte o arquivo [LICENSE](LIC
 
 ---
 
-<div align="center">
-
-<img src="assets/nyx-mark.svg" alt="Símbolo NYX" width="72">
-
-### NYX · NR TECH
-
-**Think Scientifically. Compute Intelligently.**
-
-Uma linguagem em construção. Uma arquitetura guiada por rigor, interoperabilidade e evolução verificável.
-
-</div>
 
 
 
 
 
-### Navegação complementar — arquitetura aprofundada
-
-- [12. Visão sistêmica](#12-visão-sistêmica-da-linguagem-ao-produto-de-dados)
-- [13. Modelo de execução](#13-modelo-de-execução-presente-e-evolução)
-- [14. Infraestrutura de dados](#14-infraestrutura-de-dados-arquitetura-de-referência)
-- [15. Infraestrutura científica](#15-infraestrutura-científica-precisão-estabilidade-e-reprodutibilidade)
-- [16. Interoperabilidade](#16-interoperabilidade-adaptadores-e-fronteiras-técnicas)
-- [17. Observabilidade](#17-observabilidade-diagnóstico-e-operação)
-- [18. Segurança](#18-segurança-e-cadeia-de-suprimentos)
-- [19. Benchmarking](#19-estratégia-de-desempenho-e-benchmarking)
-- [20. Maturidade](#20-matriz-de-maturidade-e-evolução)
-- [21. Frontend e gramática](#21-projeto-do-frontend-análise-lexical-sintática-e-estrutural)
-- [22–32. Semântica, tipos, bibliotecas, ferramentas e governança](#22-semântica-decisões-que-não-podem-ficar-implícitas)
 
 ## 12. Visão sistêmica: da linguagem ao produto de dados
 

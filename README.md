@@ -105,6 +105,8 @@ O exemplo utiliza apenas recursos já implementados no núcleo atual.
 
 ## 04. Ciência de dados e domínios computacionais
 
+<p align="center"><img src="assets/nyx-data-ecosystem.svg" alt="Mapa do ecossistema científico e de dados da NYX" width="100%"></p>
+
 A NYX nasce com uma orientação multidisciplinar. O objetivo de longo prazo é oferecer uma linguagem capaz de transitar entre fundamentos matemáticos, processamento de dados, análise, modelagem e integração de sistemas.
 
 | Domínio planejado | Escopo | Capacidades pretendidas |
@@ -288,7 +290,22 @@ Uma linguagem em construção. Uma arquitetura guiada por rigor, interoperabilid
 
 
 
-## 22. Visão sistêmica: da linguagem ao produto de dados
+
+
+### Navegação complementar — arquitetura aprofundada
+
+- [12. Visão sistêmica](#12-visão-sistêmica-da-linguagem-ao-produto-de-dados)
+- [13. Modelo de execução](#13-modelo-de-execução-presente-e-evolução)
+- [14. Infraestrutura de dados](#14-infraestrutura-de-dados-arquitetura-de-referência)
+- [15. Infraestrutura científica](#15-infraestrutura-científica-precisão-estabilidade-e-reprodutibilidade)
+- [16. Interoperabilidade](#16-interoperabilidade-adaptadores-e-fronteiras-técnicas)
+- [17. Observabilidade](#17-observabilidade-diagnóstico-e-operação)
+- [18. Segurança](#18-segurança-e-cadeia-de-suprimentos)
+- [19. Benchmarking](#19-estratégia-de-desempenho-e-benchmarking)
+- [20. Maturidade](#20-matriz-de-maturidade-e-evolução)
+- [21–32. Especificação, runtime, dados, qualidade e governança](#21-projeto-do-frontend-análise-lexical-sintática-e-estrutural)
+
+## 12. Visão sistêmica: da linguagem ao produto de dados
 
 A ambição da NYX exige que a linguagem seja pensada como um sistema de componentes cooperantes. O código-fonte é apenas a primeira interface. Ao longo da evolução, a plataforma deverá definir como programas são analisados, como valores são representados, como dados são movimentados, como operações são executadas e como resultados podem ser auditados.
 
@@ -311,7 +328,7 @@ A ambição da NYX exige que a linguagem seja pensada como um sistema de compone
 
 Essa separação evita que uma decisão de implementação se torne uma regra implícita da linguagem. Uma operação científica, por exemplo, deverá possuir semântica definida independentemente do backend numérico escolhido. Da mesma forma, um conector SQL não deve alterar o comportamento de atribuição, escopo ou tipos do núcleo.
 
-## 23. Modelo de execução: presente e evolução
+## 13. Modelo de execução: presente e evolução
 
 <p align="center"><img src="assets/nyx-runtime-pipeline.svg" alt="Fluxo de execução atual do interpretador NYX" width="100%"></p>
 
@@ -341,7 +358,7 @@ O protótipo atual percorre a AST por meio de um interpretador tree-walk. Isso f
 
 A sequência é uma direção de engenharia. Não implica que exista uma migração em andamento ou que um backend específico já tenha sido escolhido.
 
-## 24. Infraestrutura de dados: arquitetura de referência
+## 14. Infraestrutura de dados: arquitetura de referência
 
 <p align="center"><img src="assets/nyx-data-lifecycle.svg" alt="Ciclo de vida de dados proposto para a NYX" width="100%"></p>
 
@@ -389,7 +406,7 @@ Uma engine analítica madura normalmente precisa distinguir a intenção declara
 
 Essa arquitetura só deverá ser adotada após a definição da semântica de tabelas, tipos, nulidade e operações relacionais.
 
-## 25. Infraestrutura científica: precisão, estabilidade e reprodutibilidade
+## 15. Infraestrutura científica: precisão, estabilidade e reprodutibilidade
 
 Computação científica não se resume à disponibilidade de funções matemáticas. A linguagem deverá documentar o comportamento numérico, inclusive seus limites.
 
@@ -422,7 +439,7 @@ A infraestrutura poderá evoluir para registrar:
 - artefatos e resultados;
 - limitações e incertezas.
 
-## 26. Interoperabilidade: adaptadores e fronteiras técnicas
+## 16. Interoperabilidade: adaptadores e fronteiras técnicas
 
 <p align="center"><img src="assets/nyx-interoperability.svg" alt="Arquitetura conceitual de adaptadores e conectores da NYX" width="100%"></p>
 
@@ -467,7 +484,7 @@ A avaliação de formatos deverá levar em conta:
 
 Interfaces com Python, Rust ou C podem ser úteis para ecossistemas existentes, mas precisam respeitar ownership, ciclo de vida de memória, conversões e custos de chamada. A linguagem não deverá depender de uma única tecnologia de extensão.
 
-## 27. Observabilidade, diagnóstico e operação
+## 17. Observabilidade, diagnóstico e operação
 
 Uma linguagem voltada a aplicações analíticas precisa tornar o comportamento operacional inteligível. A observabilidade deverá crescer junto com o runtime, e não ser adicionada apenas quando surgirem problemas de produção.
 
@@ -486,7 +503,7 @@ Uma linguagem voltada a aplicações analíticas precisa tornar o comportamento 
 
 A versão alfa já fornece localização para erros léxicos, sintáticos e de execução. Isso constitui uma base inicial, mas não deve ser confundido com tracing distribuído, profiling ou observabilidade de pipelines.
 
-## 28. Segurança e cadeia de suprimentos
+## 18. Segurança e cadeia de suprimentos
 
 A segurança deverá ser tratada como requisito de arquitetura, especialmente quando a linguagem evoluir para conectores, execução de código externo e integração com modelos.
 
@@ -505,7 +522,7 @@ Princípios de projeto:
 
 Esses princípios são diretrizes futuras; não constituem uma certificação de segurança do protótipo atual.
 
-## 29. Estratégia de desempenho e benchmarking
+## 19. Estratégia de desempenho e benchmarking
 
 A NYX não fará alegações de desempenho sem evidência reproduzível. O benchmark deverá comparar tarefas equivalentes, com entradas, ambiente e critérios publicados.
 
@@ -536,7 +553,7 @@ A NYX não fará alegações de desempenho sem evidência reproduzível. O bench
 
 Não há números de benchmark publicados neste README. O protocolo acima é uma proposta metodológica para futuras comparações.
 
-## 30. Matriz de maturidade e evolução
+## 20. Matriz de maturidade e evolução
 
 <p align="center"><img src="assets/nyx-roadmap-matrix.svg" alt="Matriz visual de evolução e maturidade da NYX" width="100%"></p>
 
@@ -605,7 +622,7 @@ Linguagem independente. Ciência aplicada. Engenharia orientada por evidências.
 
 
 
-## 31. Projeto do frontend: análise lexical, sintática e estrutural
+## 21. Projeto do frontend: análise lexical, sintática e estrutural
 
 O frontend é a porta de entrada da linguagem. Sua responsabilidade é converter texto em uma representação estruturada, mantendo diagnósticos úteis e comportamento determinístico.
 
@@ -648,7 +665,7 @@ A especificação deverá fornecer casos normativos. Cada construção terá:
 5. categoria de diagnóstico;
 6. regra de compatibilidade.
 
-## 32. Semântica: decisões que não podem ficar implícitas
+## 12. Semântica: decisões que não podem ficar implícitas
 
 Uma linguagem torna-se previsível quando seus comportamentos são especificados, não quando dependem de detalhes incidentais da implementação.
 
@@ -669,7 +686,7 @@ Uma linguagem torna-se previsível quando seus comportamentos são especificados
 
 Mudanças de parser, runtime ou backend não deverão modificar silenciosamente o resultado de programas válidos. Quando uma mudança incompatível for inevitável, deverá ser registrada, justificada e acompanhada de orientação de migração.
 
-## 33. Estratégia de tipos e valores
+## 13. Estratégia de tipos e valores
 
 O modelo de tipos precisa servir tanto ao núcleo da linguagem quanto aos domínios científicos e tabulares.
 
@@ -692,7 +709,7 @@ A futura especificação numérica deverá distinguir precisão, faixa represent
 
 Uma estrutura tabular futura precisará representar schema, tipos de coluna, nulidade, metadados e operações relacionais. A semântica de uma coluna não deve ser inferida apenas pelo primeiro valor observado sem política documentada.
 
-## 34. Bibliotecas e modularidade
+## 14. Bibliotecas e modularidade
 
 A biblioteca padrão deverá ser organizada por domínios e manter dependências explícitas.
 
@@ -722,7 +739,7 @@ Essa divisão é uma proposta de organização. Nenhuma dessas bibliotecas deve 
 - documentação de limitações;
 - política de versionamento.
 
-## 35. Gestão de dependências e distribuição
+## 15. Gestão de dependências e distribuição
 
 O empacotamento atual utiliza setuptools e wheel, com configuração em pyproject.toml. O pacote publicado no PyPI é uma prévia alfa do protótipo.
 
@@ -749,7 +766,7 @@ A eventual transição para runtime nativo exigirá decidir como serão distribu
 
 Essas decisões ainda não estão concluídas.
 
-## 36. Experiência de desenvolvimento e ferramentas
+## 16. Experiência de desenvolvimento e ferramentas
 
 Uma linguagem útil precisa de ferramentas que tornem o ciclo de desenvolvimento eficiente e previsível.
 
@@ -768,7 +785,7 @@ Uma linguagem útil precisa de ferramentas que tornem o ciclo de desenvolvimento
 
 A CLI existente é a ferramenta disponível hoje. As demais são possibilidades de evolução e não devem ser anunciadas como prontas.
 
-## 37. Arquitetura de execução de dados: plano conceitual
+## 17. Arquitetura de execução de dados: plano conceitual
 
 Uma futura engine de dados poderá exigir um ciclo próprio de planejamento e execução. Esse ciclo deverá ser subordinado à semântica da linguagem e não substituir o runtime geral.
 
@@ -809,7 +826,7 @@ flowchart TD
 
 Cada otimização precisará preservar resultados e ser acompanhada por testes de equivalência. Não há otimizador de consultas implementado na versão alfa.
 
-## 38. Modelo de qualidade para dados
+## 18. Modelo de qualidade para dados
 
 A qualidade deverá ser tratada como propriedade verificável, não como uma etapa informal de limpeza.
 
@@ -830,7 +847,7 @@ A qualidade deverá ser tratada como propriedade verificável, não como uma eta
 
 Uma futura API de qualidade poderá permitir declarar regras, registrar violações, separar dados aceitos e rejeitados e acompanhar tendências. A sintaxe e o modelo de execução dessas regras ainda precisam ser especificados.
 
-## 39. Governança de dados e experimentos
+## 19. Governança de dados e experimentos
 
 A ambição científica e analítica exige governança proporcional ao uso.
 
@@ -859,7 +876,7 @@ A ambição científica e analítica exige governança proporcional ao uso.
 
 A NYX deverá oferecer meios para integrar essas práticas, mas não há atualmente um catálogo, registro de experimentos ou serviço de governança implementado.
 
-## 40. Estratégia de compatibilidade e releases
+## 20. Estratégia de compatibilidade e releases
 
 A evolução de uma linguagem pode quebrar programas, ferramentas e pacotes. Por isso, a política de versões deverá diferenciar claramente:
 
@@ -881,7 +898,7 @@ A evolução de uma linguagem pode quebrar programas, ferramentas e pacotes. Por
 7. assinatura ou proveniência quando aplicável;
 8. política de suporte e correção.
 
-## 41. Perguntas arquiteturais em aberto
+## 21. Perguntas arquiteturais em aberto
 
 O projeto deverá tratar explicitamente as seguintes decisões antes de consolidar a plataforma:
 
@@ -900,7 +917,7 @@ O projeto deverá tratar explicitamente as seguintes decisões antes de consolid
 
 A documentação dessas decisões deve evoluir com propostas técnicas e evidências, sem antecipar respostas que ainda não foram aprovadas.
 
-## 42. Resumo técnico
+## 12. Resumo técnico
 
 | Eixo | Base atual | Horizonte |
 |---|---|---|

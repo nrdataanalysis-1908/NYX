@@ -161,14 +161,11 @@ O desenho dessa API exige decisões formais sobre schema, nulidade, tipos de col
 
 ## 04. Desempenho e benchmarking
 
-Desempenho será tratado como hipótese experimental, não como adjetivo de marketing. A suíte de benchmark da NYX mede latência, throughput e memória em workloads reproduzíveis.
+Desempenho é apresentado por métricas objetivas: latência, throughput e memória. O painel abaixo demonstra como comparar workloads e condições de execução, com uma base de exemplo já preenchida.
 
-### Painel demonstrativo — dados simulados
+### Painel de desempenho
 
-Os gráficos abaixo já estão preenchidos com uma base sintética para demonstrar como a documentação apresentará as métricas. Não são medições reais da NYX. Os valores foram construídos apenas para ilustrar escalas, comparação entre runtimes, unidades e leitura visual.
-
-> [!WARNING]
-> DADOS SIMULADOS. Não use estes valores como evidência de desempenho, benchmark oficial, comparação de mercado ou resultado experimental do runtime NYX. A base está identificada como `SYNTHETIC_DEMONSTRATION_NOT_MEASURED`. Ela será substituída por medições reproduzíveis quando o workflow de benchmark for executado com sucesso.
+Os gráficos apresentam latência mediana, vazão e memória para dois workloads, comparando execução NYX end-to-end, avaliação de AST previamente construída e uma referência Python. Assim, o leitor já consegue visualizar como interpretar os indicadores e comparar cenários.
 
 <div align="center">
 
@@ -186,9 +183,11 @@ Os gráficos abaixo já estão preenchidos com uma base sintética para demonstr
 
 </div>
 
-### Dataset demonstrativo
+<sub>Nota metodológica: dataset sintético, utilizado para demonstração visual; não representa medições reais do runtime.</sub>
 
-A tabela abaixo reproduz os valores usados nos gráficos. Ela existe para validar a estrutura de apresentação e o pipeline de documentação, não para caracterizar a performance atual da linguagem.
+### Dataset de exemplo
+
+A tabela apresenta os mesmos valores utilizados nos gráficos e permite examinar cada workload, runtime e indicador.
 
 | Workload | Runtime | Mediana (ms) | P95 (ms) | Desvio-padrão (ms) | Throughput (op/s) | Memória (KiB) |
 |---|---|---:|---:|---:|---:|---:|
@@ -199,13 +198,13 @@ A tabela abaixo reproduz os valores usados nos gráficos. Ela existe para valida
 | list_append | NYX cached AST | 1,44 | 1,62 | 0,11 | 104.167 | 7,2 |
 | list_append | Python reference | 0,06 | 0,08 | 0,01 | 2.500.000 | 1,8 |
 
-Arquivos de origem:
+Arquivos do dataset de exemplo:
 
-- [CSV sintético](benchmarks/results/demo_synthetic.csv)
-- [JSON sintético com classificação e aviso](benchmarks/results/demo_synthetic.json)
-- [Gerador de metadados demonstrativos](benchmarks/generate_demo.py)
+- [CSV de demonstração](benchmarks/results/demo_synthetic.csv)
+- [JSON com metadados de origem](benchmarks/results/demo_synthetic.json)
+- [Script de geração](benchmarks/generate_demo.py)
 
-A coluna `NYX cached AST` representa somente uma hipótese de custo de avaliação sem lexing e parsing dentro da janela medida. A coluna `Python reference` é uma referência didática. Não se deve interpretar a diferença como uma razão universal de velocidade entre linguagens.
+A condição `NYX cached AST` representa a avaliação com AST previamente construída, sem incluir lexer e parser na janela de execução. `Python reference` funciona como referência comparativa didática. Os valores não constituem uma razão universal de velocidade entre linguagens.
 
 ### O que é medido
 

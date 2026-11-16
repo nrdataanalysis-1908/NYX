@@ -303,7 +303,8 @@ Uma linguagem em construção. Uma arquitetura guiada por rigor, interoperabilid
 - [18. Segurança](#18-segurança-e-cadeia-de-suprimentos)
 - [19. Benchmarking](#19-estratégia-de-desempenho-e-benchmarking)
 - [20. Maturidade](#20-matriz-de-maturidade-e-evolução)
-- [21–32. Especificação, runtime, dados, qualidade e governança](#21-projeto-do-frontend-análise-lexical-sintática-e-estrutural)
+- [21. Frontend e gramática](#21-projeto-do-frontend-análise-lexical-sintática-e-estrutural)
+- [22–32. Semântica, tipos, bibliotecas, ferramentas e governança](#22-semântica-decisões-que-não-podem-ficar-implícitas)
 
 ## 12. Visão sistêmica: da linguagem ao produto de dados
 
@@ -665,7 +666,7 @@ A especificação deverá fornecer casos normativos. Cada construção terá:
 5. categoria de diagnóstico;
 6. regra de compatibilidade.
 
-## 12. Semântica: decisões que não podem ficar implícitas
+## 22. Semântica: decisões que não podem ficar implícitas
 
 Uma linguagem torna-se previsível quando seus comportamentos são especificados, não quando dependem de detalhes incidentais da implementação.
 
@@ -686,7 +687,7 @@ Uma linguagem torna-se previsível quando seus comportamentos são especificados
 
 Mudanças de parser, runtime ou backend não deverão modificar silenciosamente o resultado de programas válidos. Quando uma mudança incompatível for inevitável, deverá ser registrada, justificada e acompanhada de orientação de migração.
 
-## 13. Estratégia de tipos e valores
+## 23. Estratégia de tipos e valores
 
 O modelo de tipos precisa servir tanto ao núcleo da linguagem quanto aos domínios científicos e tabulares.
 
@@ -709,7 +710,7 @@ A futura especificação numérica deverá distinguir precisão, faixa represent
 
 Uma estrutura tabular futura precisará representar schema, tipos de coluna, nulidade, metadados e operações relacionais. A semântica de uma coluna não deve ser inferida apenas pelo primeiro valor observado sem política documentada.
 
-## 14. Bibliotecas e modularidade
+## 24. Bibliotecas e modularidade
 
 A biblioteca padrão deverá ser organizada por domínios e manter dependências explícitas.
 
@@ -739,7 +740,7 @@ Essa divisão é uma proposta de organização. Nenhuma dessas bibliotecas deve 
 - documentação de limitações;
 - política de versionamento.
 
-## 15. Gestão de dependências e distribuição
+## 25. Gestão de dependências e distribuição
 
 O empacotamento atual utiliza setuptools e wheel, com configuração em pyproject.toml. O pacote publicado no PyPI é uma prévia alfa do protótipo.
 
@@ -766,7 +767,7 @@ A eventual transição para runtime nativo exigirá decidir como serão distribu
 
 Essas decisões ainda não estão concluídas.
 
-## 16. Experiência de desenvolvimento e ferramentas
+## 26. Experiência de desenvolvimento e ferramentas
 
 Uma linguagem útil precisa de ferramentas que tornem o ciclo de desenvolvimento eficiente e previsível.
 
@@ -785,7 +786,7 @@ Uma linguagem útil precisa de ferramentas que tornem o ciclo de desenvolvimento
 
 A CLI existente é a ferramenta disponível hoje. As demais são possibilidades de evolução e não devem ser anunciadas como prontas.
 
-## 17. Arquitetura de execução de dados: plano conceitual
+## 27. Arquitetura de execução de dados: plano conceitual
 
 Uma futura engine de dados poderá exigir um ciclo próprio de planejamento e execução. Esse ciclo deverá ser subordinado à semântica da linguagem e não substituir o runtime geral.
 
@@ -826,7 +827,7 @@ flowchart TD
 
 Cada otimização precisará preservar resultados e ser acompanhada por testes de equivalência. Não há otimizador de consultas implementado na versão alfa.
 
-## 18. Modelo de qualidade para dados
+## 28. Modelo de qualidade para dados
 
 A qualidade deverá ser tratada como propriedade verificável, não como uma etapa informal de limpeza.
 
@@ -847,7 +848,7 @@ A qualidade deverá ser tratada como propriedade verificável, não como uma eta
 
 Uma futura API de qualidade poderá permitir declarar regras, registrar violações, separar dados aceitos e rejeitados e acompanhar tendências. A sintaxe e o modelo de execução dessas regras ainda precisam ser especificados.
 
-## 19. Governança de dados e experimentos
+## 29. Governança de dados e experimentos
 
 A ambição científica e analítica exige governança proporcional ao uso.
 
@@ -876,7 +877,7 @@ A ambição científica e analítica exige governança proporcional ao uso.
 
 A NYX deverá oferecer meios para integrar essas práticas, mas não há atualmente um catálogo, registro de experimentos ou serviço de governança implementado.
 
-## 20. Estratégia de compatibilidade e releases
+## 30. Estratégia de compatibilidade e releases
 
 A evolução de uma linguagem pode quebrar programas, ferramentas e pacotes. Por isso, a política de versões deverá diferenciar claramente:
 
@@ -898,7 +899,7 @@ A evolução de uma linguagem pode quebrar programas, ferramentas e pacotes. Por
 7. assinatura ou proveniência quando aplicável;
 8. política de suporte e correção.
 
-## 21. Perguntas arquiteturais em aberto
+## 31. Perguntas arquiteturais em aberto
 
 O projeto deverá tratar explicitamente as seguintes decisões antes de consolidar a plataforma:
 
@@ -917,7 +918,7 @@ O projeto deverá tratar explicitamente as seguintes decisões antes de consolid
 
 A documentação dessas decisões deve evoluir com propostas técnicas e evidências, sem antecipar respostas que ainda não foram aprovadas.
 
-## 12. Resumo técnico
+## 32. Resumo técnico
 
 | Eixo | Base atual | Horizonte |
 |---|---|---|
